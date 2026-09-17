@@ -13,8 +13,9 @@ venv/
 .venv/
 env/
 
-# Packaged binary
+# Packaged binaries — these go to GitHub Releases, not the repo
 DesktopPet_v69.exe
+*.zip
 
 # Your own sprites sit in the repo root and stay untracked (personal art).
 # Only the root-level copies are ignored; placeholder/ ships with the repo.

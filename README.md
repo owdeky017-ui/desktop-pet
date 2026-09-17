@@ -11,6 +11,17 @@ A transparent desktop companion that talks back, naps on your screen, and looks 
 
 ---
 
+## 下载 · Download
+
+不想配环境？直接从 Releases 拿打包好的版本：
+
+Prefer to just run it? Grab the packaged build from the releases page:
+
+👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)** — 下 `DesktopPet-v69-windows.zip`（含 exe + 占位素材），解压到同一个文件夹，双击 `DesktopPet_v69.exe` 即可，免安装。
+Download `DesktopPet-v69-windows.zip` (exe plus placeholder sprites), unzip everything into one folder, and double-click `DesktopPet_v69.exe`. No installer.
+
+---
+
 ## 功能 · Features
 
 - **透明无边框窗口** — 真正"住"在桌面上，不抢任务栏位置
