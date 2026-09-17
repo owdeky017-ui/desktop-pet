@@ -1,0 +1,132 @@
+==========================================================
+  桌面宠物 Desktop Pet v6.9 · 使用说明
+==========================================================
+
+【一、怎么运行】
+
+把压缩包里的所有文件解压到【同一个文件夹】，双击 DesktopPet_v69.exe。
+免安装，不需要 Python 环境。
+
+
+【二、文件夹里都有什么】
+
+  DesktopPet_v69.exe    主程序
+
+  pet_transparent.png   宠物主形象（同时也是系统托盘图标）
+  mini_1.png
+  mini_2.png            双击宠物时从天上掉下来的小人，5 张里随机
+  mini_3.png
+  mini_4.png
+  mini_5.png
+  使用说明.txt          本文件
+
+  exe 内部已经内置了这 6 张图，所以即使把它们删掉，程序照样能显示。
+  压缩包里另外放一份，是为了方便你照着尺寸和格式改成自己的图。
+
+  第一次运行后，程序会在 exe 旁边自动生成 data/ 文件夹，
+  生词本、配置、截图都写在里面，不会散落到别的地方。
+
+
+==========================================================
+  三、换成自己的图片（3 步）
+==========================================================
+
+第 1 步：准备图片
+  - 必须是 PNG，并且带透明背景
+    （背景不透明的话，宠物会显示成一块白方块）
+  - 尺寸随意，程序按图片原始大小显示，之后可以用滚轮缩放
+  - 主形象建议 500x500 左右
+
+第 2 步：改成下面这些文件名（必须完全一致）
+
+      你的主形象   ->  pet_transparent.png
+      小人 1~5     ->  mini_1.png  mini_2.png  mini_3.png
+                       mini_4.png  mini_5.png
+
+  小人不足 5 张也没关系，少几张就只在已有的那几张里随机。
+
+第 3 步：覆盖 + 重启
+  把改好名字的图片复制到 DesktopPet_v69.exe 所在的文件夹，
+  覆盖原来的文件，然后重启程序。
+
+  *** 图片必须和 exe 在【同一个文件夹】里 ***
+  *** 放进子文件夹（比如 sprites\）是读不到的 ***
+
+
+  想同时保留好几套形象？
+  把额外的图命名成 pet_任意名字.png（例如 pet_睡衣.png），
+  同样放到 exe 旁边，然后：
+
+      右键宠物 -> 设置 -> 形象
+
+  下拉框里就能看到并切换了。
+
+
+==========================================================
+  四、改宠物名字
+==========================================================
+
+  右键宠物 -> 设置 -> 在「宠物名」输入框里改 -> 确定
+
+  立即生效，不用重启。宠物台词里的 {name} 会自动换成新名字，
+  系统托盘的提示文字也会同步更新。
+
+  输入框留空的话，会回到默认名字「花枝」。
+
+  也可以直接改 exe 旁边的 pet_config.json 里的 "pet_name"：
+
+      { "pet_name": "小豆丁" }
+
+  （注意是 exe 旁边的 pet_config.json，不是 data\ 里面的）
+
+
+==========================================================
+  五、常见问题
+==========================================================
+
+Q: 换了图片没反应？
+A: 按顺序检查三件事 ——
+   ① 图片是不是和 exe 在同一个文件夹（不是子文件夹）
+   ② 文件名是不是拼对了
+   ③ 程序重启了没有
+   主形象必须重启才生效；小人图不用重启，下次双击时就换。
+
+Q: 宠物显示成一块白方块，或者完全看不见？
+A: 图片不是带透明背景的 PNG，或者文件本身损坏了。
+   把压缩包里自带的原图复制回来覆盖试试。
+
+Q: 宠物不见了？
+A: 可能被拖到屏幕外，或者在系统托盘里被隐藏了。
+   看屏幕右下角的托盘图标，右键 -> 显示。
+
+Q: 想恢复默认形象？
+A: 重新解压一次压缩包，把里面的 6 张 PNG 复制回来覆盖即可。
+
+Q: 生词本、截图存在哪？
+A: 都在 exe 旁边的 data\ 文件夹里。整个 data\ 删掉就会恢复初始状态。
+
+
+----------------------------------------------------------
+  English (short version)
+----------------------------------------------------------
+
+Run: unzip everything into ONE folder, then double-click DesktopPet_v69.exe.
+No installer, no Python required.
+
+Replace the sprites:
+  1. Prepare PNGs with transparent backgrounds (opaque backgrounds render
+     as a white box).
+  2. Rename them exactly: pet_transparent.png (main sprite, also the tray
+     icon) and mini_1.png ... mini_5.png (the little characters).
+     Fewer than 5 minis is fine.
+  3. Copy them into the SAME folder as the exe, overwrite, and restart.
+     Images inside a subfolder are ignored.
+
+Extra skins: name them pet_<anything>.png, drop them next to the exe, then
+right-click the pet -> Settings -> Skin to switch.
+
+Rename your pet: right-click the pet -> Settings -> type a new name into the
+"宠物名" (pet name) box -> OK. Takes effect immediately, no restart needed.
+You can also edit "pet_name" in pet_config.json next to the exe.
+
+Your data (vocab book, config, screenshots) lives in data\ next to the exe.

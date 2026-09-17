@@ -17,8 +17,19 @@ A transparent desktop companion that talks back, naps on your screen, and looks 
 
 Prefer to just run it? Grab the packaged build from the releases page:
 
-👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)** — 下 `DesktopPet-v69-windows.zip`（含 exe + 占位素材），解压到同一个文件夹，双击 `DesktopPet_v69.exe` 即可，免安装。
-Download `DesktopPet-v69-windows.zip` (exe plus placeholder sprites), unzip everything into one folder, and double-click `DesktopPet_v69.exe`. No installer.
+👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)** — 下 `DesktopPet-v69-windows.zip`，解压到同一个文件夹，双击 `DesktopPet_v69.exe` 即可，免安装。
+
+压缩包里有三样东西：
+
+The zip contains three things:
+
+| 文件 · File | 说明 · What it is |
+| --- | --- |
+| `DesktopPet_v69.exe` | 主程序（已内嵌占位形象，单独双击就能跑）<br>The app — placeholder sprites are embedded, so it runs on its own |
+| `sprites/` | 默认的占位形象 PNG —— 直接改这些图就能换形象，改完放回 exe 旁边<br>Placeholder sprite PNGs — edit these to reskin the pet, then put them next to the exe |
+| `使用说明.txt` · `README.txt` | 换图、改宠物名等操作步骤<br>Step-by-step: swapping sprites, renaming the pet, etc. |
+
+Download the zip, unzip everything into one folder, and double-click `DesktopPet_v69.exe`. No installer. To use your own art, see [自备素材 · Bring your own sprites](#自备素材--bring-your-own-sprites).
 
 ---
 
@@ -71,12 +82,25 @@ python main.py
 
 ```bash
 pip install pyinstaller
-pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69 main.py
+pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69 ^
+  --add-data "placeholder\pet_transparent.png;." ^
+  --add-data "placeholder\mini_1.png;." ^
+  --add-data "placeholder\mini_2.png;." ^
+  --add-data "placeholder\mini_3.png;." ^
+  --add-data "placeholder\mini_4.png;." ^
+  --add-data "placeholder\mini_5.png;." ^
+  main.py
 ```
 
-打包完成后，把 PNG 资源放到 exe 同目录下（见下节，可先用 `placeholder/` 里的占位图顶着）。然后把 `data/`、`DesktopPet_v69.exe`、所有 PNG 一起发出去即可。
+> **`--add-data` 不能省。** 素材没打进 exe 时程序照样能启动，但形象是空白的 —— `QPixmap` 加载失败只返回空图，不抛异常、不报错，很容易被当成"打包成功"。Windows 上分隔符用 `;`，macOS/Linux 用 `:`。
+>
+> Don't skip `--add-data`. Without bundled sprites the app still launches but renders nothing — `QPixmap` fails silently and returns a null pixmap, which looks exactly like a successful build. Use `;` on Windows, `:` on macOS/Linux.
 
-After building, drop the PNG assets next to the exe (see below; the `placeholder/` sprites work fine to start). Distribute `DesktopPet_v69.exe`, the PNGs, and the auto-generated `data/` folder.
+想内嵌自己的素材，把上面 `placeholder\` 换成你自己的文件路径即可（见下节）。
+
+打包完成后 `DesktopPet_v69.exe` 单独一个文件就能跑（素材已内嵌）。想让别人也能换图，就把 PNG 一并放进压缩包 —— 见下节。
+
+To embed your own art, swap `placeholder\` for your own paths (see below). The resulting `DesktopPet_v69.exe` runs standalone with sprites embedded. If you want users to be able to swap sprites, ship the PNGs alongside it in the zip — see below.
 
 ---
 
@@ -111,30 +135,42 @@ Optionally add more skins by naming them `pet_<name>.png`. Switch between them i
 
 ## 数据存放 · Where data lives
 
-运行时生成的所有文件（vocab、台词库、日志、截图、配置）都放在**程序旁边的 `data/` 文件夹**里，不会污染你的工作目录。
+运行时生成的文件放在 **exe 同目录的 `data/` 文件夹**里，不会污染你的工作目录。窗口位置、缩放、各类开关单独写在 **exe 旁边的 `pet_config.json`**（不在 `data/` 里），方便查找和直接编辑。
 
-All runtime files (vocab, dialogue library, logs, screenshots, config) live in a **`data/` folder next to the program** — they stay out of your project tree.
+All runtime files (vocab, dialogue library, logs, screenshots) live in a **`data/` folder next to the program**. Window position, scale, and toggles are written to **`pet_config.json` next to the exe** — kept outside `data/` so it's easy to find and edit.
 
 ```
 DesktopPet_v69.exe
-data/
-├── pet_config.json     # 窗口位置、缩放、各类开关
-├── vocab.json          # 生词本
-├── lines.json          # 自定义台词（首次运行自动生成）
-├── typing_log.txt      # 调试日志（按需生成）
-├── translation_log.txt # 调试日志（按需生成）
-└── screenshots/        # 截图保存目录
+├── pet_config.json    # 窗口位置、缩放、各类开关（直接放在 exe 旁边方便编辑）
+├── (你的 PNGs)        # pet_transparent.png / mini_*.png / pet_xxx.png
+└── data/
+    ├── vocab.json          # 生词本
+    ├── lines.json          # 自定义台词（首次运行自动生成）
+    ├── typing_log.txt      # 调试日志（按需生成）
+    ├── translation_log.txt # 调试日志（按需生成）
+    └── screenshots/        # 截图保存目录
 ```
 
 ### 改宠物名 · Rename your pet
 
-台词里的 `{name}` 是占位符，运行时替换成 `pet_config.json` 里的 `pet_name`，默认是「花枝」。想叫别的就改这一项：
+台词里的 `{name}` 是占位符，运行时替换成 `pet_name`，默认是「花枝」。改名有两种方式：
 
-Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` in `pet_config.json` (defaults to 花枝). Change it to whatever you call your pet:
+Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` (defaults to 花枝). Two ways to rename:
+
+**1. 设置面板（推荐）** —— 右键 → 设置 → 在「宠物名」输入框里改 → 确定。立即生效，不用重启，托盘提示和台词会同步更新。
+
+Through the UI: right-click the pet → Settings → type a new name in the box → OK. Takes effect immediately; tray tooltip and dialogue update live.
+
+**2. 直接改配置文件** —— 打开 `pet_config.json`，改 `"pet_name"`：
+
+Or edit `pet_config.json` directly:
 
 ```json
 { "pet_name": "小豆丁" }
 ```
+
+> 输入框留空的话，会回到默认名字「花枝」。
+> Leaving the box empty reverts to the default name 花枝.
 
 ---
 

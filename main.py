@@ -27,7 +27,7 @@ from ctypes import wintypes
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import urllib.parse
 from PySide6.QtWidgets import (QApplication, QWidget, QLabel, QMenu, QSystemTrayIcon,
-                               QSlider, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QInputDialog, QCheckBox, QComboBox, QTextEdit, QMessageBox)
+                               QSlider, QVBoxLayout, QHBoxLayout, QDialog, QPushButton, QInputDialog, QCheckBox, QComboBox, QTextEdit, QMessageBox, QLineEdit)
 from PySide6.QtGui import QPixmap, QPainter, QColor, QBrush, QPen, QFont, QFontMetrics, QPainterPath, QIcon, QCursor
 from PySide6.QtCore import Qt, QTimer, QPoint, QRect, QSize, Signal, QEvent, QPropertyAnimation, QThread
 
@@ -55,7 +55,24 @@ def get_data_dir():
 
 # ============ 可配置参数 ============
 PET_IMAGE = get_resource_path("pet_transparent.png")
-MINI_IMAGES = [get_resource_path(f"mini_{i}.png") for i in range(1, 6)]
+MINI_IMAGE_NAMES = [f"mini_{i}.png" for i in range(1, 6)]
+
+
+def get_mini_images():
+    """小人图片：优先用 exe 同目录下的（方便用户替换），没有再回退到内嵌资源。
+
+    Mini-character sprites: prefer copies sitting next to the exe so users can
+    swap them, falling back to the ones bundled into the build.
+    """
+    if getattr(sys, 'frozen', False):
+        base = os.path.dirname(sys.executable)
+    else:
+        base = os.path.dirname(os.path.abspath(__file__))
+    paths = []
+    for name in MINI_IMAGE_NAMES:
+        custom = os.path.join(base, name)
+        paths.append(custom if os.path.exists(custom) else get_resource_path(name))
+    return paths
 DEFAULT_PET_NAME = "花枝"  # 台词里的 {name} 会替换成它
 MIN_SCALE = 0.1
 MAX_SCALE = 1.0
@@ -752,8 +769,8 @@ class SettingsDialog(QDialog):
     def __init__(self, pet, parent=None):
         super().__init__(parent)
         self.pet = pet
-        self.setWindowTitle(f"{self.pet_name}设置")
-        self.setFixedSize(340, 500)
+        self.setWindowTitle(f"{pet.pet_name}设置")
+        self.setFixedSize(340, 545)
 
         layout = QVBoxLayout()
         layout.setSpacing(8)
@@ -834,6 +851,15 @@ class SettingsDialog(QDialog):
 
         # === 外观设置 ===
         layout.addWidget(QLabel("👗 外观设置"))
+
+        # 宠物名（台词里的 {name} 会替换成它）
+        name_layout = QHBoxLayout()
+        name_layout.addWidget(QLabel("宠物名："))
+        self.name_edit = QLineEdit(pet.pet_name)
+        self.name_edit.setPlaceholderText(DEFAULT_PET_NAME)
+        name_layout.addWidget(self.name_edit, 1)
+        layout.addLayout(name_layout)
+
         skin_layout = QHBoxLayout()
         skin_layout.addWidget(QLabel("形象："))
         self.skin_combo = QComboBox()
@@ -902,6 +928,7 @@ class SettingsDialog(QDialog):
             "sound_enabled": self.chk_sound.isChecked(),
             "sound_volume": self.vol_slider.value(),
             "current_skin": self.skin_combo.currentData(),
+            "pet_name": self.name_edit.text().strip() or DEFAULT_PET_NAME,
         }
         self.settings_changed.emit(changes)
         self.accept()
@@ -1274,7 +1301,7 @@ class DesktopPet(QWidget):
             self.current_mini.close()
             self.current_mini = None
         # 随机选一个小人
-        mini_img = random.choice(MINI_IMAGES)
+        mini_img = random.choice(get_mini_images())
         # 小人大约为宠物宽度的0.5倍
         mini_size = max(40, int(self.width() * 0.5))
         # 头顶位置（皇冠顶部）
@@ -2715,6 +2742,10 @@ render();
         # 形象切换
         if "current_skin" in changes and changes["current_skin"] != self.current_skin:
             self._switch_skin(changes["current_skin"])
+        # 宠物名（台词里的 {name} 占位符运行时替换）
+        if "pet_name" in changes and changes["pet_name"] != self.pet_name:
+            self.pet_name = changes["pet_name"]
+            self.tray.setToolTip(f"桌面宠物 - {self.pet_name}")
         self._update_context_menu()
         self._save_config()
 
