@@ -1043,6 +1043,9 @@ class DesktopPet(QWidget):
         self.opacity_timer.timeout.connect(self._update_opacity)
         self.opacity_timer.start(1000)
 
+        # 宠物名（托盘提示会用到，必须早于 _create_tray；稍后由配置覆盖）
+        self.pet_name = DEFAULT_PET_NAME
+
         # 系统托盘
         self._create_tray()
 
