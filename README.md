@@ -26,8 +26,12 @@ The zip contains three things:
 | 文件 · File | 说明 · What it is |
 | --- | --- |
 | `DesktopPet_v69.exe` | 主程序（已内嵌占位形象，单独双击就能跑）<br>The app — placeholder sprites are embedded, so it runs on its own |
-| `sprites/` | 默认的占位形象 PNG —— 直接改这些图就能换形象，改完放回 exe 旁边<br>Placeholder sprite PNGs — edit these to reskin the pet, then put them next to the exe |
-| `使用说明.txt` · `README.txt` | 换图、改宠物名等操作步骤<br>Step-by-step: swapping sprites, renaming the pet, etc. |
+| `pet_transparent.png`<br>`mini_1.png` ~ `mini_5.png` | 默认的占位形象 PNG —— 直接改这些图就能换形象，改完放回 exe 旁边<br>Placeholder sprite PNGs — edit these to reskin the pet, then put them next to the exe |
+| `使用说明.txt` | 换图、改宠物名等操作步骤<br>Step-by-step: swapping sprites, renaming the pet, etc. |
+
+> **注意：下载下来看到的不是上面的预览图。** 预览图是作者自绘的成品形象（仅作示意），发布包内嵌的是占位形象（粉色小熊），要把占位图换成作者那套或你自己的图，看压缩包里的 `使用说明.txt`。
+>
+> **The pet in the download won't look like the screenshot above.** The screenshot is a finished illustration of the author's own art (just for show); the release actually ships a placeholder sprite (a pink bear). To swap in the author's art or your own, see `使用说明.txt` in the zip.
 
 Download the zip, unzip everything into one folder, and double-click `DesktopPet_v69.exe`. No installer. To use your own art, see [自备素材 · Bring your own sprites](#自备素材--bring-your-own-sprites).
 
