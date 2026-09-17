@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>生词本</title>
+<style>
+body { font-family: "Microsoft YaHei", sans-serif; background: #fff5f8; margin: 0; padding: 30px; }
+h1 { color: #e91e63; text-align: center; }
+.container { max-width: 850px; margin: 0 auto; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.count { text-align: center; color: #888; margin-bottom: 8px; }
+.filepath { text-align: center; color: #999; font-size: 12px; margin-bottom: 15px; word-break: break-all; }
+.toolbar { text-align: center; margin-bottom: 15px; }
+.btn { background: #e91e63; color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 14px; margin: 0 5px; }
+.btn:hover { background: #c2185b; }
+.btn-gray { background: #999; }
+.btn-gray:hover { background: #777; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+th { background: #fce4ec; color: #c2185b; }
+.word { font-weight: bold; color: #333; font-size: 16px; }
+.time { color: #aaa; font-size: 12px; white-space: nowrap; }
+tr:hover { background: #fafafa; }
+.del-btn { background: #ffcdd2; color: #c62828; border: none; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-size: 12px; }
+.del-btn:hover { background: #ef9a9a; }
+.tip { background: #fff3e0; padding: 10px 15px; border-radius: 8px; color: #e65100; font-size: 13px; margin-top: 15px; display: none; }
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4caf50; color: white; padding: 10px 25px; border-radius: 20px; display: none; z-index: 999; }
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="container">
+<h1>🌸 生词本</h1>
+<p class="count" id="count">共 0 个单词</p>
+<p class="filepath">📁 示例输出 — 真实数据由程序运行时写入 vocab.json</p>
+<div class="toolbar">
+<button class="btn btn-gray" onclick="refresh()">↺ 刷新</button>
+<button class="btn btn-gray" onclick="toggleAll()">☑ 全选</button>
+<button class="btn" onclick="batchDelete()">🗑 批量删除</button>
+</div>
+<table>
+<thead><tr><th><input type="checkbox" id="checkAll" onclick="toggleAll()"></th><th>#</th><th>单词</th><th>释义</th><th>添加时间</th><th>操作</th></tr></thead>
+<tbody id="tbody">
+</tbody>
+</table>
+</div>
+<script>
+let vocab = {};
+
+function render() {
+    let tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+    let items = Object.entries(vocab).sort((a,b) => (b[1].time||'').localeCompare(a[1].time||''));
+    items.forEach((item, i) => {
+        let w = item[0], info = item[1];
+        let m = (info.meaning || '').replace(/\n/g, '<br>');
+        let t = info.time || '';
+        let tr = document.createElement('tr');
+        tr.innerHTML = `<td><input type="checkbox" class="word-check" data-word="${w}"></td><td>${i+1}</td><td class="word">${w}</td><td>${m}</td><td class="time">${t}</td><td><button class="del-btn" onclick="delWord('${w.replace(/'/g,"\\'")}')">删除</button></td>`;
+        tbody.appendChild(tr);
+    });
+    document.getElementById('count').textContent = '共 ' + items.length + ' 个单词';
+}
+
+function delWord(w) {
+    if (!confirm('确定删除「' + w + '」吗？')) return;
+    fetch('http://127.0.0.1:0/delete?word=' + encodeURIComponent(w))
+        .then(() => {
+            delete vocab[w];
+            render();
+            showToast('已删除，下次导出自动生效 ✅');
+        })
+        .catch(() => {
+            showToast('删除失败，请确保桌宠正在运行');
+        });
+}
+
+function toggleAll() {
+    let checked = document.getElementById('checkAll').checked;
+    document.querySelectorAll('.word-check').forEach(cb => cb.checked = checked);
+}
+
+function batchDelete() {
+    let selected = Array.from(document.querySelectorAll('.word-check:checked')).map(cb => cb.dataset.word);
+    if (selected.length === 0) { showToast('请先勾选要删除的单词'); return; }
+    if (!confirm('确定删除选中的 ' + selected.length + ' 个单词吗？')) return;
+    let done = 0;
+    selected.forEach(w => {
+        fetch('http://127.0.0.1:0/delete?word=' + encodeURIComponent(w))
+            .then(() => {
+                delete vocab[w];
+                done++;
+                if (done === selected.length) {
+                    render();
+                    document.getElementById('checkAll').checked = false;
+                    showToast('已删除 ' + done + ' 个单词 ✅');
+                }
+            })
+            .catch(() => showToast('删除失败，请确保桌宠正在运行'));
+    });
+}
+
+function refresh() {
+    fetch('http://127.0.0.1:0/list')
+        .then(r => r.json())
+        .then(data => {
+            vocab = data;
+            render();
+            showToast('已刷新');
+        })
+        .catch(() => showToast('刷新失败，请确保桌宠正在运行'));
+}
+
+function showToast(msg) {
+    let t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2000);
+}
+
+render();
+</script>
+</body>
+</html>

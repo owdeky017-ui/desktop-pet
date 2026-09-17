@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.spec
+build/
+dist/
+
+# Virtual env (do not commit)
+venv/
+.venv/
+env/
+
+# Packaged binary
+DesktopPet_v69.exe
+
+# Pet sprites are personal art and are not redistributed with the repo.
+# See README "Bring your own sprites" for the expected filenames.
+pet*.png
+mini_*.png
+
+# Runtime data directory (vocab, logs, screenshots, generated config)
+data/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local notes
+*.log
+*.tmp
