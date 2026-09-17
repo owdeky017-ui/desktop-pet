@@ -56,6 +56,7 @@ def get_data_dir():
 # ============ 可配置参数 ============
 PET_IMAGE = get_resource_path("pet_transparent.png")
 MINI_IMAGES = [get_resource_path(f"mini_{i}.png") for i in range(1, 6)]
+DEFAULT_PET_NAME = "花枝"  # 台词里的 {name} 会替换成它
 MIN_SCALE = 0.1
 MAX_SCALE = 1.0
 DEFAULT_SCALE = 0.1
@@ -78,65 +79,65 @@ LINES_PATH = os.path.join(DATA_DIR, "lines.json")
 # 默认台词库
 DEFAULT_LINES = {
     "idle": [
-        "（探头）哈喽呀～你终于来啦，花枝等你好久了啊啊啊💗",
-        "哦哈哟～今天也要元气满满哦，花枝给你注入能量！੧ᐛ੭",
-        "（歪头）咦你回来啦，快过来让花枝看看有没有好好吃饭◐⩊◑",
-        "嘤嘤嘤人家好无聊，有没有人来陪花枝聊聊天嘛（）",
-        "（戳戳你）在看什么呢在看什么呢，让花枝也看看嘛～",
-        "呜呜呜你都不理花枝，花枝要黑化了哦💢（才不会，理我一下嘛）",
-        "花枝哈拿提醒您，该次饭啦🍚再不吃饭饭就要凉了哦",
+        "（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗",
+        "哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭",
+        "（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑",
+        "嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）",
+        "（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～",
+        "呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）",
+        "{name}提醒您，该次饭啦🍚再不吃饭饭就要凉了哦",
         "（打哈欠）好困哦... 但是还想再陪你一会儿...zzz",
-        "工作加油哦！花枝在旁边给你应援！！✊🏻摸鱼也可以的（小声）",
+        "工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）",
         "唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪",
         "报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口",
-        "（突然凑近）悄悄告诉你，花枝今天也超级喜欢你呀💗",
+        "（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗",
         "系不系今天也很辛苦呀，来，给你抱抱🤗",
         "你说... 爱就爱不爱就不爱，可爱是什么意思呀😠",
-        "想不想跟花枝回武汉七热干面呀，花枝请客（才怪，你请）",
-        "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心花枝会心疼的 TT",
-        "没关系的啦，天塌下来有花枝顶着（虽然花枝也顶不住），一切都会好的ʔ・̫͡・ʕ",
+        "想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）",
+        "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT",
+        "没关系的啦，天塌下来有{name}顶着（虽然{name}也顶不住），一切都会好的ʔ・̫͡・ʕ",
         "在相册翻翻捡捡... 发现有你的每一天都是独一无二的幸福🌸",
         "哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）",
-        "（一本正经）人类已经无法阻止花枝哈拿了！（下一秒）啊好饿，次饭去",
+        "（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去",
     ],
     "click": [
-        "（探头）哈喽呀～你终于来啦，花枝等你好久了啊啊啊💗",
-        "哦哈哟～今天也要元气满满哦，花枝给你注入能量！੧ᐛ੭",
-        "（歪头）咦你回来啦，快过来让花枝看看有没有好好吃饭◐⩊◑",
-        "嘤嘤嘤人家好无聊，有没有人来陪花枝聊聊天嘛（）",
-        "（戳戳你）在看什么呢在看什么呢，让花枝也看看嘛～",
-        "呜呜呜你都不理花枝，花枝要黑化了哦💢（才不会，理我一下嘛）",
+        "（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗",
+        "哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭",
+        "（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑",
+        "嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）",
+        "（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～",
+        "呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）",
         "系不系今天也很辛苦呀，来，给你抱抱🤗",
         "你说... 爱就爱不爱就不爱，可爱是什么意思呀😠",
-        "（突然凑近）悄悄告诉你，花枝今天也超级喜欢你呀💗",
-        "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心花枝会心疼的 TT",
+        "（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗",
+        "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT",
     ],
     "double": [
         "哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）",
-        "（一本正经）人类已经无法阻止花枝哈拿了！（下一秒）啊好饿，次饭去",
+        "（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去",
         "报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口",
         "唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪",
-        "想不想跟花枝回武汉七热干面呀，花枝请客（才怪，你请）",
-        "工作加油哦！花枝在旁边给你应援！！✊🏻摸鱼也可以的（小声）",
+        "想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）",
+        "工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）",
     ],
     "typing_long": [
         "哇，你打了好多字呀，辛苦了～",
-        "认真工作的样子好帅！花枝给你捶捶背🤗",
+        "认真工作的样子好帅！{name}给你捶捶背🤗",
         "这么多内容，是在写什么重要的东西吗～",
     ],
     "typing_medium": [
-        "嗯嗯，花枝在旁边安静陪着你～",
-        "加油加油！花枝为你应援✊",
+        "嗯嗯，{name}在旁边安静陪着你～",
+        "加油加油！{name}为你应援✊",
         "打字打得好认真呀，要不要休息一下～",
     ],
     "typing_short": [
-        "你在跟谁聊天呀～是不是在说花枝的好话😳",
-        "在写什么呢在写什么呢，让花枝看看嘛～",
-        "哦哦，又在忙啦，花枝不打扰你了",
+        "你在跟谁聊天呀～是不是在说{name}的好话😳",
+        "在写什么呢在写什么呢，让{name}看看嘛～",
+        "哦哦，又在忙啦，{name}不打扰你了",
         "打字啪啪啪的，好厉害呀！",
     ],
     "cling": [
-        "抱住啦～花枝会乖乖陪着你的🥰",
+        "抱住啦～{name}会乖乖陪着你的🥰",
         "嘿嘿，攀上来咯，这里视野不错呀～",
         "抱紧抱紧，不会掉下去的（才怪）",
     ],
@@ -145,7 +146,7 @@ DEFAULT_LINES = {
     ],
     "greeting_morning": [
         "早上好呀～新的一天也要元气满满哦☀️",
-        "早安早安，花枝已经等你好久啦～",
+        "早安早安，{name}已经等你好久啦～",
     ],
     "greeting_afternoon": [
         "下午好呀～要不要喝杯奶茶提提神🥤",
@@ -153,11 +154,11 @@ DEFAULT_LINES = {
     ],
     "greeting_evening": [
         "晚上好呀～今天也辛苦啦💗",
-        "晚饭吃了吗？不吃饭花枝会担心的哦",
+        "晚饭吃了吗？不吃饭{name}会担心的哦",
     ],
     "greeting_night": [
-        "这么晚还不睡呀～花枝陪你熬夜🌙",
-        "夜深了，要注意休息哦，花枝会心疼的",
+        "这么晚还不睡呀～{name}陪你熬夜🌙",
+        "夜深了，要注意休息哦，{name}会心疼的",
     ],
 }
 
@@ -751,7 +752,7 @@ class SettingsDialog(QDialog):
     def __init__(self, pet, parent=None):
         super().__init__(parent)
         self.pet = pet
-        self.setWindowTitle("花枝设置")
+        self.setWindowTitle(f"{self.pet_name}设置")
         self.setFixedSize(340, 500)
 
         layout = QVBoxLayout()
@@ -1075,6 +1076,7 @@ class DesktopPet(QWidget):
         self.sound_enabled = cfg.get("sound_enabled", True)
         self.sound_volume = cfg.get("sound_volume", 50)
         self.current_skin = cfg.get("current_skin", "pet_transparent.png")
+        self.pet_name = cfg.get("pet_name", DEFAULT_PET_NAME)
         self._last_translated_text = ""
         # 加载选择的形象
         self._load_skin(self.current_skin)
@@ -1418,6 +1420,8 @@ class DesktopPet(QWidget):
         return result
 
     def _show_bubble(self, text):
+        # 台词里的 {name} 占位符换成宠物名
+        text = text.replace("{name}", self.pet_name)
         # 气泡显示在宠物左侧，尾巴指向玫瑰花（避开头顶小人掉落区域）
         rose_x = self.x() + int(self.width() * 0.14)
         rose_y = self.y() + int(self.height() * 0.35)
@@ -1850,7 +1854,7 @@ class DesktopPet(QWidget):
 
     def _detach(self, say_goodbye=False):
         if say_goodbye and self.bubble_enabled and self.attached_window and self.attached_window != "screen":
-            self._show_bubble("诶？窗口不见啦，花枝自己去玩咯～")
+            self._show_bubble("诶？窗口不见啦，{name}自己去玩咯～")
         self.attached_window = None
         self.attached_side = None
         self.attach_timer.stop()
@@ -1915,6 +1919,7 @@ class DesktopPet(QWidget):
                 "sound_enabled": self.sound_enabled,
                 "sound_volume": self.sound_volume,
                 "current_skin": self.current_skin,
+                "pet_name": self.pet_name,
             }
             with open(CONFIG_PATH, "w", encoding="utf-8") as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -2099,7 +2104,7 @@ class DesktopPet(QWidget):
         self.typing_enabled = not self.typing_enabled
         if self.typing_enabled:
             self._start_keyboard_hook()
-            self._show_bubble("打字反应已开启～打字时花枝会陪你哦⌨️")
+            self._show_bubble("打字反应已开启～打字时{name}会陪你哦⌨️")
         else:
             self._stop_keyboard_hook()
             self._show_bubble("打字反应已关闭")
@@ -2723,7 +2728,7 @@ render();
         self.tray = QSystemTrayIcon(self)
         icon = QIcon(PET_IMAGE)
         self.tray.setIcon(icon)
-        self.tray.setToolTip("桌面宠物 - 花枝")
+        self.tray.setToolTip(f"桌面宠物 - {self.pet_name}")
         tray_menu = QMenu()
         act_settings = tray_menu.addAction("⚙️ 设置...")
         act_settings.triggered.connect(self._show_settings_dialog)

@@ -6,8 +6,8 @@ A transparent desktop companion that talks back, naps on your screen, and looks 
 
 ![Preview](docs/preview.png)
 
-> 上图用的是仓库自带的**占位形象**（`placeholder/`）。真实的宠物素材是私人手绘，不随仓库分发 —— 见下方「自备素材」。
-> The screenshot above uses the **bundled placeholder sprites**. The real artwork is personal and not redistributed with the repo — see [Bring your own sprites](#bring-your-own-sprites).
+> 上图用的是**作者自绘的形象**（素材原文件不随仓库分发）。仓库另带一套占位形象，clone 后复制一下就能跑 —— 见下方「自备素材」。
+> The screenshot shows the **author's own artwork** (source PNGs aren't redistributed). The repo also ships placeholder sprites so it runs right after cloning — see [Bring your own sprites](#bring-your-own-sprites).
 
 ---
 
@@ -124,6 +124,16 @@ data/
 ├── typing_log.txt      # 调试日志（按需生成）
 ├── translation_log.txt # 调试日志（按需生成）
 └── screenshots/        # 截图保存目录
+```
+
+### 改宠物名 · Rename your pet
+
+台词里的 `{name}` 是占位符，运行时替换成 `pet_config.json` 里的 `pet_name`，默认是「花枝」。想叫别的就改这一项：
+
+Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` in `pet_config.json` (defaults to 花枝). Change it to whatever you call your pet:
+
+```json
+{ "pet_name": "小豆丁" }
 ```
 
 ---
