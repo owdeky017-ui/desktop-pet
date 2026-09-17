@@ -24,6 +24,10 @@ DesktopPet_v69.exe
 # Runtime data directory (vocab, logs, screenshots, generated config)
 data/
 
+# Runtime config — the app rewrites this on every change (window position, toggles).
+# It doubles as the sample config, so keep it out of commits.
+pet_config.json
+
 # IDE / OS
 .vscode/
 .idea/
