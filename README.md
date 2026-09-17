@@ -4,8 +4,6 @@
 
 A transparent desktop companion that talks back, naps on your screen, and looks up words while you work.
 
-![Preview](docs/preview.png)
-
 > Pet sprite assets are not bundled in this repository. See [Bring your own sprites](#bring-your-own-sprites) below.
 
 ---
