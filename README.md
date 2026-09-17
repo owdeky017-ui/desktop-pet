@@ -4,7 +4,10 @@
 
 A transparent desktop companion that talks back, naps on your screen, and looks up words while you work.
 
-> Pet sprite assets are not bundled in this repository. See [Bring your own sprites](#bring-your-own-sprites) below.
+![Preview](docs/preview.png)
+
+> 上图用的是仓库自带的**占位形象**（`placeholder/`）。真实的宠物素材是私人手绘，不随仓库分发 —— 见下方「自备素材」。
+> The screenshot above uses the **bundled placeholder sprites**. The real artwork is personal and not redistributed with the repo — see [Bring your own sprites](#bring-your-own-sprites).
 
 ---
 
@@ -60,23 +63,34 @@ pip install pyinstaller
 pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69 main.py
 ```
 
-打包完成后，把 PNG 资源放到 exe 同目录下（见下节）。然后把 `data/`、`DesktopPet_v69.exe`、所有 PNG 一起发出去即可。
+打包完成后，把 PNG 资源放到 exe 同目录下（见下节，可先用 `placeholder/` 里的占位图顶着）。然后把 `data/`、`DesktopPet_v69.exe`、所有 PNG 一起发出去即可。
 
-After building, drop the PNG assets next to the exe (see below). Distribute `DesktopPet_v69.exe`, the PNGs, and the auto-generated `data/` folder.
+After building, drop the PNG assets next to the exe (see below; the `placeholder/` sprites work fine to start). Distribute `DesktopPet_v69.exe`, the PNGs, and the auto-generated `data/` folder.
 
 ---
 
 ## 自备素材 · Bring your own sprites
 
-这个仓库不包含任何 PNG 资源 —— 因为它们是私人的定制美术。把下面这些文件放到仓库根目录（或 exe 同目录），程序就能跑：
+仓库自带一套**程序生成的占位形象**（`placeholder/`），clone 下来就能先跑起来看效果：
 
-This repo ships without any PNG art on purpose — the original sprites are personal. Drop these files into the repo root (or the directory next to the exe) and it just works:
+The repo ships with **generated placeholder sprites** (`placeholder/`) so it runs right after cloning:
+
+```bash
+copy placeholder\*.png .
+python main.py
+```
+
+想换成自己的素材时，把下面这些文件放到仓库根目录（或 exe 同目录）覆盖掉即可：
+
+When you're ready to swap in your own art, drop these files into the repo root (or the directory next to the exe):
 
 | 文件 · File | 用途 · Used for |
 | --- | --- |
-| `pet_transparent.png` | 主形象（默认皮肤，透明背景）<br>Default skin — the main pet sprite, transparent background |
-| `pet.png` | 托盘图标<br>System tray icon |
+| `pet_transparent.png` | 主形象 + 系统托盘图标（透明背景）<br>Main sprite **and** system tray icon — the tray reuses this same file, transparent background |
 | `mini_1.png` ~ `mini_5.png` | 双击时从天上掉下来的小人<br>Mini characters that drop from the sky on double-click |
+
+> `pet.png` 代码里没有引用 —— 托盘图标用的是 `pet_transparent.png`（`QIcon(PET_IMAGE)`）。
+> `pet.png` is never referenced — the tray loads `pet_transparent.png` via `QIcon(PET_IMAGE)`.
 
 可选用 `pet_<name>.png` 命名添加更多皮肤，在右键菜单 → 设置 → 形象里切换。
 
@@ -117,7 +131,9 @@ Right-click → Autostart writes a `DesktopPet_Hana` entry under `HKCU\Software\
 .
 ├── main.py              # 全部代码（透明窗口、动画、气泡、生词本、截图、翻译……）
 ├── requirements.txt     # 依赖
-├── .gitignore            # 排除 venv / .spec / .exe / 运行时 data 目录
+├── .gitignore            # 排除 venv / .exe / 根目录真实素材 / 运行时 data 目录
+├── placeholder/          # 占位形象（程序生成，clone 后复制到根目录即可运行）
+├── docs/preview.png      # README 顶部效果图
 ├── pet_config.json      # 配置示例（运行时会被覆盖成你自己的）
 ├── vocab.json           # 生词本（空起步）
 ├── 生词本.html           # 导出生词本的样例输出（演示用，无真实数据）

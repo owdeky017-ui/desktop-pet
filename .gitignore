@@ -16,10 +16,10 @@ env/
 # Packaged binary
 DesktopPet_v69.exe
 
-# Pet sprites are personal art and are not redistributed with the repo.
-# See README "Bring your own sprites" for the expected filenames.
-pet*.png
-mini_*.png
+# Your own sprites sit in the repo root and stay untracked (personal art).
+# Only the root-level copies are ignored; placeholder/ ships with the repo.
+/pet*.png
+/mini_*.png
 
 # Runtime data directory (vocab, logs, screenshots, generated config)
 data/
