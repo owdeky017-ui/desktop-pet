@@ -352,7 +352,11 @@ def get_mini_images():
 DEFAULT_PET_NAME = ""  # 默认未命名；留空时台词里的 {name} 自称「我」，用户可在设置里改名
 MIN_SCALE = 0.1
 MAX_SCALE = 1.0
-DEFAULT_SCALE = 0.5  # 0.1 对 placeholder（256px）太不友好；首启缩到 26px 用户看不到。改为 0.5 后占位图 128px 可见。已有 config 用户的 scale 不受这个值影响
+DEFAULT_SCALE = 0.35  # 首启默认尺寸。0.1 对 placeholder（256px）太小（26px 看不见）；0.5 显示 128px 偏大，压到 0.35 ≈ 90px。已有 config 用户的 scale 不受这个值影响
+# 气泡尾巴（指向宠物的那个小三角）的伸出长度，单位像素。
+# 气泡窗口定位时要按它留出重叠量：让「气泡主体」刚好停在宠物边缘外，
+# 只有尾巴压进宠物一点。否则气泡会盖住形象本身。
+BUBBLE_TAIL = 12
 BUBBLE_DURATION = 4000  # 气泡显示时长ms
 IDLE_ACTION_MIN = 30000  # 闲置动作最小间隔ms
 IDLE_ACTION_MAX = 60000  # 闲置动作最大间隔ms
@@ -591,8 +595,16 @@ class BubbleWindow(QWidget):
                         all_lines.append(current + w)
                         current = ""
                     else:
-                        all_lines.append(current)
-                        current = w
+                        # 拉丁文按空格断词，别把单词劈成两半
+                        # （"I'll" 会被拆成 "I" / "'ll"，英文欢迎语里一眼就看到）
+                        # 中文没有空格，rfind 返回 -1，走原来的按字符断行，行为不变。
+                        sp = current.rfind(" ")
+                        if sp > 0 and w != " " and w.isascii() and current[sp + 1:].isascii():
+                            all_lines.append(current[:sp])
+                            current = current[sp + 1:] + w
+                        else:
+                            all_lines.append(current)
+                            current = w
                 else:
                     current = test
             if current:
@@ -701,7 +713,7 @@ class BubbleWindow(QWidget):
         p.setRenderHint(QPainter.Antialiasing)
         w = self.width()
         h = self.height()
-        tail_h = 12
+        tail_h = BUBBLE_TAIL
         # 气泡主体区域
         if self.tail_side == "bottom":
             rect = QRect(0, 0, w, h - tail_h)
@@ -1760,8 +1772,7 @@ class DesktopPet(QWidget):
             self.current_mini.update_position(target_x, target_y)
         # 气泡跟随宠物移动
         if self.bubble and self.bubble.isVisible():
-            rose_x = self.x() + int(self.width() * 0.14)
-            rose_y = self.y() + int(self.height() * 0.35)
+            rose_x, rose_y = self._bubble_anchor()
             self.bubble.follow(rose_x, rose_y)
 
     # ----------------------------------------------------------------
@@ -1779,12 +1790,21 @@ class DesktopPet(QWidget):
         self._last_line = result
         return result
 
+    def _bubble_anchor(self):
+        """气泡尾巴要对准的锚点（宠物左边缘内侧一点点）。
+
+        锚点取「宠物左边缘 + 尾巴长度」：这样气泡主体的右边缘正好停在宠物左边缘，
+        只有 BUBBLE_TAIL 那 12px 的尾巴压进宠物一点。
+        以前取 width*0.14（为了对准玫瑰花），宠物越大压得越多——579px 的形象会被盖掉 81px。
+        注意：气泡的显示和每帧跟随都用这里，必须只有这一处计算，否则两边不一致。
+        """
+        return self.x() + BUBBLE_TAIL, self.y() + int(self.height() * 0.35)
+
     def _show_bubble(self, text):
         # 台词里的 {name} 占位符换成宠物名；未命名时自称「我」
         text = text.replace("{name}", self.pet_name or T("我"))
-        # 气泡显示在宠物左侧，尾巴指向玫瑰花（避开头顶小人掉落区域）
-        rose_x = self.x() + int(self.width() * 0.14)
-        rose_y = self.y() + int(self.height() * 0.35)
+        # 气泡显示在宠物左侧，尾巴指向宠物
+        rose_x, rose_y = self._bubble_anchor()
         self.bubble.show_text(text, rose_x, rose_y, "right")
         # 根据文本长度动态计算显示时间：打字时间 + 阅读时间，最长12秒
         text_len = len(text)

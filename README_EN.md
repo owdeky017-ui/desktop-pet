@@ -116,6 +116,8 @@ Under the hood every UI string is written as `T("中文原文")`. `T()` returns 
 
 The repo ships with **generated placeholder sprites** (`placeholder/`) so it runs right after cloning:
 
+![Placeholder sprite preview](docs/preview_placeholder_en.png)
+
 ```bash
 copy placeholder\*.png .
 python main.py

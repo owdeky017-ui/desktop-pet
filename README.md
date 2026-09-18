@@ -118,6 +118,8 @@ pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69_en ^
 
 仓库自带一套**程序生成的占位形象**（`placeholder/`），clone 下来就能先跑起来看效果：
 
+![占位形象预览](docs/preview_placeholder.png)
+
 ```bash
 copy placeholder\*.png .
 python main.py

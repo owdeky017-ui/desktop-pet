@@ -27,6 +27,13 @@ DesktopPet_v69.exe
 /pet*.png
 /mini_*.png
 
+# Local version snapshots — only exist on this machine, never pushed.
+#   我的版本/原始版  = 作者最初那版源码 + 作者自绘形象
+#   我的版本/最新版  = 最新源码 + 作者自绘形象
+#   你改的版本/      = 发布版源码 + 占位形象 + 打包好的 exe/zip
+/我的版本/
+/你改的版本/
+
 # Runtime data directory (vocab, logs, screenshots, generated config)
 data/
 
