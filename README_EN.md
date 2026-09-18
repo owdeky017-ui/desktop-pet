@@ -14,18 +14,24 @@ A transparent desktop companion that lives on your screen — it chats, naps, ke
 
 Don't want to set up an environment? Grab the packaged build from the releases page:
 
-👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)** — download `DesktopPet-v69-windows.zip`, unzip everything into one folder, and double-click `DesktopPet_v69.exe`. No installer.
+👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)**
 
-The zip contains:
+The release ships two independent builds, **each fully in its own language — menus, settings, and the pet's dialogue**:
+
+| Build | Archive | Executable | UI language | Guide inside |
+| --- | --- | --- | --- | --- |
+| Chinese | `DesktopPet-v69-windows.zip` | `DesktopPet_v69.exe` | Chinese | `使用说明.txt` |
+| English | `DesktopPet-v69-windows-en.zip` | `DesktopPet_v69_en.exe` | English | `Instructions.txt` |
+
+Unzip everything into one folder and double-click the executable for the build you want. No installer. Both builds can live in the same folder without interfering with each other.
+
+Besides the executable and the guide, the zip contains 6 placeholder sprites:
 
 | File | What it is |
 | --- | --- |
-| `DesktopPet_v69.exe` | The app. Placeholder sprites are embedded, so it runs on its own. |
 | `pet_transparent.png`<br>`mini_1.png` ~ `mini_5.png` | Default placeholder sprites — edit these to reskin the pet, then put them back next to the exe. |
-| `使用说明.txt` | Step-by-step guide in Chinese: swapping sprites, renaming the pet, etc. |
-| `使用说明_EN.txt` | The same guide in English. |
 
-> **Heads up: what you get is not what you see in the screenshot above.** The screenshot is a finished illustration of the author's own art (for show only); the release ships a placeholder sprite (a pink bear). To swap in the author's art or your own, see `使用说明_EN.txt` in the zip.
+> **Heads up: what you get is not what you see in the screenshot above.** The screenshot is a finished illustration of the author's own art (for show only); the release ships a placeholder sprite (a pink bear). To swap in the author's art or your own, see the guide inside the zip.
 
 ---
 
@@ -80,6 +86,27 @@ pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69 ^
 > **Don't skip `--add-data`.** Without the sprites bundled, the app still launches but renders nothing — `QPixmap` fails silently and returns a null pixmap, which looks exactly like a successful build. Use `;` as the separator on Windows, `:` on macOS/Linux.
 
 To embed your own art, swap `placeholder\` for your own paths (see below). The resulting `DesktopPet_v69.exe` runs standalone with the sprites embedded. If you want users to be able to swap sprites, ship the PNGs alongside it in the zip — see below.
+
+### Build the English version
+
+The UI language is decided by a **`lang.txt` bundled at build time** — it is not a runtime toggle. Put `en` in it and you get the English build; without the file (or with `zh`) you get the Chinese one.
+
+```bash
+# Prepare the language marker
+mkdir build_lang_en
+echo en > build_lang_en\lang.txt
+
+# Build the English exe: one extra --add-data drops lang.txt into the bundle root
+pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69_en ^
+  --add-data "build_lang_en\lang.txt;." ^
+  --add-data "placeholder\pet_transparent.png;." ^
+  ...(the other 5 minis go here)...
+  main.py
+```
+
+> The file must be named `lang.txt` — `--add-data` places files in a target directory without renaming them, so prepare the Chinese and English markers in separate folders.
+
+Under the hood every UI string is written as `T("中文原文")`. `T()` returns the string unchanged in the Chinese build and looks it up in the `EN` table in the English one. The dialogue library, menus, settings window, bubbles, and the word-list export page all go through it. **The Chinese build's output is byte-for-byte identical to before i18n was added.**
 
 ---
 
@@ -139,7 +166,9 @@ Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet
 
 ## Autostart on login
 
-Right-click → Autostart writes a `DesktopPet_Hana` entry under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
+Right-click → Autostart writes a `DesktopPet_Pet` entry under `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
+
+> Older builds (early v6.9) used `DesktopPet_Hana`. Writing the new value also deletes the old one, so you never end up with two autostart entries launching the app twice.
 
 ---
 
@@ -150,7 +179,7 @@ The pet window is **hidden on startup by default** — only the tray icon shows,
 - Click the tray icon.
 - Right-click the tray icon → Show/hide pet.
 
-To change it: right-click → Settings → uncheck 「启动时隐藏窗口（只在托盘显示）」 ("hide window on startup, tray only"). The pet window will show on launch from then on.
+To change it: right-click → Settings → uncheck **"Hide window on startup (tray only)"** (Chinese build: 「启动时隐藏窗口（只在托盘显示）」) → OK. The pet window will show on launch from then on.
 
 > **Tray icon missing?** Windows folds infrequently used icons into the "hidden icons" overflow (the up arrow). Click the arrow to find it; to pin it: **Settings → Personalization → Taskbar → Taskbar corner overflow** → turn Desktop Pet on. That's a Windows-level setting the app can't set for you.
 
@@ -170,8 +199,8 @@ To change it: right-click → Settings → uncheck 「启动时隐藏窗口（�
 ├── 生词本.html          # sample vocab-book export (demo only, no real data)
 ├── README.md            # Chinese README
 ├── README_EN.md         # this file
-├── 使用说明.txt         # guide shipped in the release zip (Chinese)
-└── 使用说明_EN.txt      # guide shipped in the release zip (English)
+├── 使用说明.txt         # guide shipped in the Chinese build
+└── Instructions.txt     # guide shipped in the English build
 ```
 
 ---

@@ -53,6 +53,276 @@ def get_data_dir():
     return data_dir
 
 
+# ============ 多语言 ============
+# 英文版打包时把 lang.txt（内容 en）内嵌进 exe；没有这个文件就是中文版。
+# 界面文案统一走 T()：入参就是中文原文，中文版原样返回，英文版查 EN 表。
+# 中文原文即翻译表的主键，所以中文版输出和以前完全一致。
+def _detect_lang():
+    try:
+        p = get_resource_path("lang.txt")
+        if os.path.exists(p):
+            with open(p, "r", encoding="utf-8") as f:
+                v = f.read().strip().lower()
+                if v in ("zh", "en"):
+                    return v
+    except Exception:
+        pass
+    return "zh"
+
+
+APP_LANG = _detect_lang()
+
+EN = {
+    # ---------- 台词库：闲置 / 日常 ----------
+    "（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗":
+        "(peeks out) Hellooo~ you're finally here! {name} has been waiting foreverrr 💗",
+    "哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭":
+        "Ohayo~ let's make today a great one! {name} is sending you energy! ੧ᐛ੭",
+    "（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑":
+        "(tilts head) Oh, you're back! Come here so {name} can check whether you've been eating properly ◐⩊◑",
+    "嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）":
+        "Waaah, {name} is sooo bored... won't somebody come chat with me? ()",
+    "（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～":
+        "(pokes you) Whatcha looking at, whatcha looking at? Let {name} see too~",
+    "呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）":
+        "Waaah, you're ignoring {name}... I'm going to turn evil 💢 (no I won't — just pay attention to me!)",
+    "{name}提醒您，该次饭啦🍚再不吃饭饭就要凉了哦":
+        "{name} reminds you: time to eat! 🍚 Your food is going to get cold~",
+    "（打哈欠）好困哦... 但是还想再陪你一会儿...zzz":
+        "(yawns) So sleepy... but {name} still wants to stay with you a little longer... zzz",
+    "工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）":
+        "You've got this! {name} is cheering right here!! ✊🏻 (goofing off is fine too... whisper)",
+    "唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪":
+        "Sigh, another day of goofing off... but goofing off is so much fun hahaha 🤪",
+    "报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口":
+        "So sorry, so sorry — {name} accidentally ate your snacks just now (x) it really was only one bite",
+    "（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗":
+        "(leans in close) Psst — {name} likes you a whole lot today too 💗",
+    "系不系今天也很辛苦呀，来，给你抱抱🤗":
+        "Rough day today, huh? Come here, hugs 🤗",
+    "你说... 爱就爱不爱就不爱，可爱是什么意思呀😠":
+        "So... if you love, you love; if you don't, you don't. But what does \"cute\" even mean?! 😠",
+    "想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）":
+        "Wanna go grab some noodles with {name}? {name}'s treat! (Just kidding — you're paying.)",
+    "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT":
+        "(hands you a candy) Here, eat this — and then cheer up, okay? {name}'s heart aches when you're sad TT",
+    "没关系的啦，天塌下来有{name}顶着（虽然{name}也顶不住），一切都会好的ʔ・̫͡・ʕ":
+        "It's okay~ if the sky falls, {name} will hold it up (even though {name} totally can't). Everything is going to be fine ʔ・̫͡・ʕ",
+    "在相册翻翻捡捡... 发现有你的每一天都是独一无二的幸福🌸":
+        "Flipping through the photo album... every single day with you is its own little happiness 🌸",
+    "哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）":
+        "Oops, {name} knocked over a glass of water... (cleaning up) let's just call it a bath for the floor ()",
+    "（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去":
+        "(dead serious) Nothing can stop {name} now! (one second later) ...Oh. Hungry. Going to eat.",
+
+    # ---------- 台词库：打字 ----------
+    "哇，你打了好多字呀，辛苦了～":
+        "Wow, you've typed so much! Nice work~",
+    "认真工作的样子好帅！{name}给你捶捶背🤗":
+        "You look so cool when you're focused! {name} will rub your shoulders 🤗",
+    "这么多内容，是在写什么重要的东西吗～":
+        "That's a lot of writing — working on something important?",
+    "嗯嗯，{name}在旁边安静陪着你～":
+        "Mm-hm, {name} is right here, quietly keeping you company~",
+    "加油加油！{name}为你应援✊":
+        "You can do it! {name} is rooting for you ✊",
+    "打字打得好认真呀，要不要休息一下～":
+        "You're typing so diligently... maybe take a little break?",
+    "你在跟谁聊天呀～是不是在说{name}的好话😳":
+        "Who are you chatting with~? Saying nice things about {name}, I hope 😳",
+    "在写什么呢在写什么呢，让{name}看看嘛～":
+        "Whatcha writing, whatcha writing? Let {name} have a peek~",
+    "哦哦，又在忙啦，{name}不打扰你了":
+        "Ohh, busy again? {name} will leave you to it.",
+    "打字啪啪啪的，好厉害呀！":
+        "Tap-tap-tap! So impressive!",
+
+    # ---------- 台词库：攀附 / 吃文件 / 问候 ----------
+    "抱住啦～{name}会乖乖陪着你的🥰":
+        "Gotcha~ {name} will stay right here with you 🥰",
+    "嘿嘿，攀上来咯，这里视野不错呀～":
+        "Hehe, climbed up! Nice view from here~",
+    "抱紧抱紧，不会掉下去的（才怪）":
+        "Holding on tight, holding on tight — not going to fall (probably)",
+    "辛苦啦~我来帮你吃掉(๑•̀ㅂ•́)و✧":
+        "Nice work~ let me eat this for you (๑•̀ㅂ•́)و✧",
+    "早上好呀～新的一天也要元气满满哦☀️":
+        "Good morning~ let's make today a bright one ☀️",
+    "早安早安，{name}已经等你好久啦～":
+        "Morning, morning! {name} has been waiting for you~",
+    "下午好呀～要不要喝杯奶茶提提神🥤":
+        "Good afternoon~ how about a milk tea to perk you up? 🥤",
+    "午安～工作辛苦了，休息一下吧":
+        "Good afternoon~ you've worked hard, take a little break",
+    "晚上好呀～今天也辛苦啦💗":
+        "Good evening~ you worked hard today too 💗",
+    "晚饭吃了吗？不吃饭{name}会担心的哦":
+        "Have you had dinner? {name} worries when you skip meals",
+    "这么晚还不睡呀～{name}陪你熬夜🌙":
+        "Still up this late~? {name} will stay up with you 🌙",
+    "夜深了，要注意休息哦，{name}会心疼的":
+        "It's late — please get some rest. {name}'s heart hurts otherwise",
+
+    # ---------- 台词库：分类标签 ----------
+    "闲置/日常": "Idle / everyday",
+    "单击": "Single click",
+    "双击": "Double click",
+    "打字(长)": "Typing (long)",
+    "打字(中)": "Typing (medium)",
+    "打字(短)": "Typing (short)",
+    "攀附": "Clinging",
+    "吃文件": "Eating files",
+    "问候(早上)": "Greeting (morning)",
+    "问候(下午)": "Greeting (afternoon)",
+    "问候(傍晚)": "Greeting (evening)",
+    "问候(深夜)": "Greeting (late night)",
+
+    # ---------- 通用 ----------
+    "确定": "OK",
+    "取消": "Cancel",
+    "保存": "Save",
+    "保存失败": "Save failed",
+    "默认": "Default",
+    "退出": "Quit",
+    "重启": "Restart",
+    "我": "I",
+
+    # ---------- 透明度对话框 ----------
+    "透明度设置": "Opacity",
+    "透明度：{v}%": "Opacity: {v}%",
+
+    # ---------- 台词编辑器 ----------
+    "台词库编辑": "Dialogue Editor",
+    "台词类型：": "Category:",
+    "每行一条台词，留空行将被忽略": "One entry per line; blank lines are ignored",
+    "在此输入台词，每行一条...": "Type dialogue here, one per line...",
+    "共 0 条": "0 entries",
+    "恢复默认": "Restore defaults",
+    "共 {n} 条": "{n} entries",
+
+    # ---------- 设置面板 ----------
+    "设置": "Settings",
+    "{name}设置": "{name} Settings",
+    "🎨 显示设置": "🎨 Display",
+    "透明度：": "Opacity:",
+    "缩放比例：": "Scale:",
+    "⚙️ 功能开关": "⚙️ Features",
+    "智能透明度（闲置自动变淡）": "Smart opacity (fade when idle)",
+    "鼠标穿透（透明区不拦截点击）": "Click-through (ignore clicks on transparent areas)",
+    "显示气泡台词": "Show speech bubbles",
+    "打字实时反应": "React while typing",
+    "实时翻译（复制英文自动翻译）": "Live translation (auto-translate copied English)",
+    "开机自启动": "Start with Windows",
+    "启动时隐藏窗口（只在托盘显示）": "Hide window on startup (tray only)",
+    "勾选后程序启动时不弹宠物窗口，只在系统托盘显示图标，点托盘图标再叫它出来":
+        "When checked, the app starts without showing the pet window — only a tray icon appears. Click the tray icon to bring the pet out.",
+    "互动音效": "Interaction sounds",
+    "音量：": "Volume:",
+    "👗 外观设置": "👗 Appearance",
+    "宠物名：": "Pet name:",
+    "未命名（留空则自称「我」）": "Unnamed (leave blank and it calls itself \"I\")",
+    "形象：": "Skin:",
+    "🔧 快捷操作": "🔧 Quick actions",
+    "重置位置": "Reset position",
+    "重置大小": "Reset size",
+    "编辑台词": "Edit dialogue",
+
+    # ---------- 右键菜单 ----------
+    "⚙️ 设置...": "⚙️ Settings...",
+    "鼠标穿透": "Click-through",
+    "显示气泡": "Show bubbles",
+    "查单词...": "Look up a word...",
+    "导出生词本": "Export word list",
+    "📖 实时翻译": "📖 Live translation",
+    "📷 全屏截图": "📷 Full-screen shot",
+    "✂️ 区域截图": "✂️ Region shot",
+    "隐藏到托盘": "Hide to tray",
+
+    # ---------- 托盘菜单 ----------
+    "桌面宠物": "Desktop Pet",
+    "桌面宠物 - {n}": "Desktop Pet - {n}",
+    "显示/隐藏宠物": "Show / hide pet",
+    "我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来":
+        "I'm hiding in the taskbar tray~ click the tray icon to call me out",
+
+    # ---------- 互动气泡 ----------
+    "呜…文件夹建不了吖(>﹏<)":
+        "Wah... {name} can't create the folder (>﹏<)",
+    "吃掉{n}个啦~都存在我的小窝里咯(≧∇≦)ﾉ":
+        "Ate {n} of them~ all tucked away in {name}'s little nest (≧∇≦)ﾉ",
+    "诶？窗口不见啦，{name}自己去玩咯～":
+        "Huh? The window's gone — {name} will go play by myself then~",
+    "换新衣服啦～好看吗💗":
+        "New outfit~ how do I look? 💗",
+    "打字反应已开启～打字时{name}会陪你哦⌨️":
+        "Typing reactions on~ {name} will keep you company while you type ⌨️",
+    "打字反应已关闭": "Typing reactions off",
+    "实时翻译已开启～复制英文就会翻译哦📖":
+        "Live translation on~ copy any English and {name} will translate it 📖",
+    "实时翻译已关闭": "Live translation off",
+    "翻译失败了，稍后再试试吧～": "Translation failed — try again in a bit~",
+
+    # ---------- 查单词 ----------
+    "英 /{uk}/ 美 /{us}/": "UK /{uk}/  US /{us}/",
+    "英 /{uk}/": "UK /{uk}/",
+    "美 /{us}/": "US /{us}/",
+    "未找到释义": "No definition found",
+    "查询失败": "Lookup failed",
+    "查询失败：{e}": "Lookup failed: {e}",
+    "查单词": "Look Up a Word",
+    "输入要查询的单词：": "Enter a word to look up:",
+    "正在查询「{w}」...": "Looking up \"{w}\"...",
+
+    # ---------- 生词本 ----------
+    "生词本": "Word List",
+    "生词本还是空的哦～快去查单词吧！": "Your word list is still empty~ go look some words up!",
+    "生词本还是空的哦～": "Your word list is still empty~",
+    "📖 生词本（共{n}词）": "📖 Word List ({n} words)",
+    "...还有{n}个词": "...and {n} more",
+    "生词本.html": "wordlist.html",
+    "生词本保存失败：{e}": "Failed to save the word list: {e}",
+    "生词本已导出，共{n}个词～": "Word list exported — {n} words~",
+    "导出失败：{e}": "Export failed: {e}",
+
+    # ---------- 生词本导出页面 ----------
+    "zh-CN": "en",
+    "共 {n} 个单词": "{n} words",
+    "📁 生词本文件：{p}": "📁 Word list file: {p}",
+    "↺ 刷新": "↺ Refresh",
+    "☑ 全选": "☑ Select all",
+    "🗑 批量删除": "🗑 Delete selected",
+    "单词": "Word",
+    "释义": "Meaning",
+    "添加时间": "Added",
+    "操作": "Actions",
+    "删除": "Delete",
+    "确定删除「{w}」吗？": "Delete \"{w}\"?",
+    "确定删除选中的 {n} 个单词吗？": "Delete the {n} selected words?",
+    "已删除，下次导出自动生效 ✅": "Deleted — takes effect on the next export ✅",
+    "已删除 {n} 个单词 ✅": "Deleted {n} words ✅",
+    "删除失败，请确保桌宠正在运行": "Delete failed — make sure the pet is running",
+    "请先勾选要删除的单词": "Select some words to delete first",
+    "已刷新": "Refreshed",
+    "刷新失败，请确保桌宠正在运行": "Refresh failed — make sure the pet is running",
+
+    # ---------- 截图 ----------
+    "💾 仅保存": "💾 Save only",
+    "📋 仅复制": "📋 Copy only",
+    "💾📋 保存并复制": "💾📋 Save and copy",
+    "截图_{ts}.png": "screenshot_{ts}.png",
+    "截屏失败：{e}": "Screenshot failed: {e}",
+    "咔嚓～已保存并复制到剪贴板📷": "Click~ saved and copied to clipboard 📷",
+    "咔嚓～截图已保存📷": "Click~ screenshot saved 📷",
+    "咔嚓～已复制到剪贴板📋": "Click~ copied to clipboard 📋",
+}
+
+
+def T(zh, **kw):
+    """取当前语言的文案。中文版原样返回，英文版查 EN 表。"""
+    s = EN.get(zh, zh) if APP_LANG == "en" else zh
+    return s.format(**kw) if kw else s
+
+
 # ============ 可配置参数 ============
 PET_IMAGE = get_resource_path("pet_transparent.png")
 MINI_IMAGE_NAMES = [f"mini_{i}.png" for i in range(1, 6)]
@@ -93,89 +363,94 @@ DATA_DIR = get_data_dir()
 VOCAB_PATH = os.path.join(DATA_DIR, "vocab.json")
 LINES_PATH = os.path.join(DATA_DIR, "lines.json")
 
+# 开机自启动写在 HKCU\...\Run 下的值名。
+# 旧版本用的是 DesktopPet_Hana，写入新值时顺手清掉，避免两条自启动项重复拉起。
+AUTOSTART_VALUE = "DesktopPet_Pet"
+AUTOSTART_VALUE_LEGACY = "DesktopPet_Hana"
+
 # 默认台词库
 DEFAULT_LINES = {
     "idle": [
-        "（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗",
-        "哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭",
-        "（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑",
-        "嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）",
-        "（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～",
-        "呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）",
-        "{name}提醒您，该次饭啦🍚再不吃饭饭就要凉了哦",
-        "（打哈欠）好困哦... 但是还想再陪你一会儿...zzz",
-        "工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）",
-        "唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪",
-        "报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口",
-        "（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗",
-        "系不系今天也很辛苦呀，来，给你抱抱🤗",
-        "你说... 爱就爱不爱就不爱，可爱是什么意思呀😠",
-        "想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）",
-        "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT",
-        "没关系的啦，天塌下来有{name}顶着（虽然{name}也顶不住），一切都会好的ʔ・̫͡・ʕ",
-        "在相册翻翻捡捡... 发现有你的每一天都是独一无二的幸福🌸",
-        "哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）",
-        "（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去",
+        T("（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗"),
+        T("哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭"),
+        T("（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑"),
+        T("嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）"),
+        T("（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～"),
+        T("呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）"),
+        T("{name}提醒您，该次饭啦🍚再不吃饭饭就要凉了哦"),
+        T("（打哈欠）好困哦... 但是还想再陪你一会儿...zzz"),
+        T("工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）"),
+        T("唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪"),
+        T("报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口"),
+        T("（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗"),
+        T("系不系今天也很辛苦呀，来，给你抱抱🤗"),
+        T("你说... 爱就爱不爱就不爱，可爱是什么意思呀😠"),
+        T("想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）"),
+        T("（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT"),
+        T("没关系的啦，天塌下来有{name}顶着（虽然{name}也顶不住），一切都会好的ʔ・̫͡・ʕ"),
+        T("在相册翻翻捡捡... 发现有你的每一天都是独一无二的幸福🌸"),
+        T("哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）"),
+        T("（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去"),
     ],
     "click": [
-        "（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗",
-        "哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭",
-        "（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑",
-        "嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）",
-        "（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～",
-        "呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）",
-        "系不系今天也很辛苦呀，来，给你抱抱🤗",
-        "你说... 爱就爱不爱就不爱，可爱是什么意思呀😠",
-        "（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗",
-        "（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT",
+        T("（探头）哈喽呀～你终于来啦，{name}等你好久了啊啊啊💗"),
+        T("哦哈哟～今天也要元气满满哦，{name}给你注入能量！੧ᐛ੭"),
+        T("（歪头）咦你回来啦，快过来让{name}看看有没有好好吃饭◐⩊◑"),
+        T("嘤嘤嘤人家好无聊，有没有人来陪{name}聊聊天嘛（）"),
+        T("（戳戳你）在看什么呢在看什么呢，让{name}也看看嘛～"),
+        T("呜呜呜你都不理{name}，{name}要黑化了哦💢（才不会，理我一下嘛）"),
+        T("系不系今天也很辛苦呀，来，给你抱抱🤗"),
+        T("你说... 爱就爱不爱就不爱，可爱是什么意思呀😠"),
+        T("（突然凑近）悄悄告诉你，{name}今天也超级喜欢你呀💗"),
+        T("（递上一颗糖）给你吃，吃完就要开心起来哦,不开心{name}会心疼的 TT"),
     ],
     "double": [
-        "哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）",
-        "（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去",
-        "报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口",
-        "唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪",
-        "想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）",
-        "工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）",
+        T("哎呀不小心打翻水杯了...（收拾中）就当是给地板洗个澡吧（）"),
+        T("（一本正经）人类已经无法阻止{name}了！（下一秒）啊好饿，次饭去"),
+        T("报一丝报一丝，刚才不小心把你的零食吃掉了（x）真的只吃了一口"),
+        T("唉今天也是摸鱼的一天呢，不过摸鱼好快乐啊哈哈哈哈🤪"),
+        T("想不想跟{name}回武汉七热干面呀，{name}请客（才怪，你请）"),
+        T("工作加油哦！{name}在旁边给你应援！！✊🏻摸鱼也可以的（小声）"),
     ],
     "typing_long": [
-        "哇，你打了好多字呀，辛苦了～",
-        "认真工作的样子好帅！{name}给你捶捶背🤗",
-        "这么多内容，是在写什么重要的东西吗～",
+        T("哇，你打了好多字呀，辛苦了～"),
+        T("认真工作的样子好帅！{name}给你捶捶背🤗"),
+        T("这么多内容，是在写什么重要的东西吗～"),
     ],
     "typing_medium": [
-        "嗯嗯，{name}在旁边安静陪着你～",
-        "加油加油！{name}为你应援✊",
-        "打字打得好认真呀，要不要休息一下～",
+        T("嗯嗯，{name}在旁边安静陪着你～"),
+        T("加油加油！{name}为你应援✊"),
+        T("打字打得好认真呀，要不要休息一下～"),
     ],
     "typing_short": [
-        "你在跟谁聊天呀～是不是在说{name}的好话😳",
-        "在写什么呢在写什么呢，让{name}看看嘛～",
-        "哦哦，又在忙啦，{name}不打扰你了",
-        "打字啪啪啪的，好厉害呀！",
+        T("你在跟谁聊天呀～是不是在说{name}的好话😳"),
+        T("在写什么呢在写什么呢，让{name}看看嘛～"),
+        T("哦哦，又在忙啦，{name}不打扰你了"),
+        T("打字啪啪啪的，好厉害呀！"),
     ],
     "cling": [
-        "抱住啦～{name}会乖乖陪着你的🥰",
-        "嘿嘿，攀上来咯，这里视野不错呀～",
-        "抱紧抱紧，不会掉下去的（才怪）",
+        T("抱住啦～{name}会乖乖陪着你的🥰"),
+        T("嘿嘿，攀上来咯，这里视野不错呀～"),
+        T("抱紧抱紧，不会掉下去的（才怪）"),
     ],
     "eat": [
-        "辛苦啦~我来帮你吃掉(๑•̀ㅂ•́)و✧",
+        T("辛苦啦~我来帮你吃掉(๑•̀ㅂ•́)و✧"),
     ],
     "greeting_morning": [
-        "早上好呀～新的一天也要元气满满哦☀️",
-        "早安早安，{name}已经等你好久啦～",
+        T("早上好呀～新的一天也要元气满满哦☀️"),
+        T("早安早安，{name}已经等你好久啦～"),
     ],
     "greeting_afternoon": [
-        "下午好呀～要不要喝杯奶茶提提神🥤",
-        "午安～工作辛苦了，休息一下吧",
+        T("下午好呀～要不要喝杯奶茶提提神🥤"),
+        T("午安～工作辛苦了，休息一下吧"),
     ],
     "greeting_evening": [
-        "晚上好呀～今天也辛苦啦💗",
-        "晚饭吃了吗？不吃饭{name}会担心的哦",
+        T("晚上好呀～今天也辛苦啦💗"),
+        T("晚饭吃了吗？不吃饭{name}会担心的哦"),
     ],
     "greeting_night": [
-        "这么晚还不睡呀～{name}陪你熬夜🌙",
-        "夜深了，要注意休息哦，{name}会心疼的",
+        T("这么晚还不睡呀～{name}陪你熬夜🌙"),
+        T("夜深了，要注意休息哦，{name}会心疼的"),
     ],
 }
 
@@ -638,19 +913,19 @@ class OpacityDialog(QDialog):
     opacity_changed = Signal(int)
     def __init__(self, current=100, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("透明度设置")
+        self.setWindowTitle(T("透明度设置"))
         self.setFixedSize(280, 100)
         layout = QVBoxLayout()
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(20, 100)
         self.slider.setValue(current)
-        self.label = QLabel(f"透明度：{current}%")
-        self.slider.valueChanged.connect(lambda v: self.label.setText(f"透明度：{v}%"))
+        self.label = QLabel(T("透明度：{v}%", v=current))
+        self.slider.valueChanged.connect(lambda v: self.label.setText(T("透明度：{v}%", v=v)))
         self.slider.valueChanged.connect(self.opacity_changed.emit)
         layout.addWidget(self.label)
         layout.addWidget(self.slider)
         btn_layout = QHBoxLayout()
-        ok_btn = QPushButton("确定")
+        ok_btn = QPushButton(T("确定"))
         ok_btn.clicked.connect(self.accept)
         btn_layout.addStretch()
         btn_layout.addWidget(ok_btn)
@@ -659,18 +934,18 @@ class OpacityDialog(QDialog):
 
 
 LINE_CATEGORIES = [
-    ("idle", "闲置/日常"),
-    ("click", "单击"),
-    ("double", "双击"),
-    ("typing_long", "打字(长)"),
-    ("typing_medium", "打字(中)"),
-    ("typing_short", "打字(短)"),
-    ("cling", "攀附"),
-    ("eat", "吃文件"),
-    ("greeting_morning", "问候(早上)"),
-    ("greeting_afternoon", "问候(下午)"),
-    ("greeting_evening", "问候(傍晚)"),
-    ("greeting_night", "问候(深夜)"),
+    ("idle", T("闲置/日常")),
+    ("click", T("单击")),
+    ("double", T("双击")),
+    ("typing_long", T("打字(长)")),
+    ("typing_medium", T("打字(中)")),
+    ("typing_short", T("打字(短)")),
+    ("cling", T("攀附")),
+    ("eat", T("吃文件")),
+    ("greeting_morning", T("问候(早上)")),
+    ("greeting_afternoon", T("问候(下午)")),
+    ("greeting_evening", T("问候(傍晚)")),
+    ("greeting_night", T("问候(深夜)")),
 ]
 
 
@@ -678,7 +953,7 @@ class LinesEditorDialog(QDialog):
     """台词库可视化编辑器"""
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("台词库编辑")
+        self.setWindowTitle(T("台词库编辑"))
         self.setFixedSize(420, 480)
         # 加载当前台词
         try:
@@ -694,7 +969,7 @@ class LinesEditorDialog(QDialog):
         layout = QVBoxLayout()
         # 类型选择
         cat_layout = QHBoxLayout()
-        cat_layout.addWidget(QLabel("台词类型："))
+        cat_layout.addWidget(QLabel(T("台词类型：")))
         self.category_combo = QComboBox()
         for key, name in LINE_CATEGORIES:
             self.category_combo.addItem(name, key)
@@ -702,27 +977,27 @@ class LinesEditorDialog(QDialog):
         cat_layout.addWidget(self.category_combo, 1)
         layout.addLayout(cat_layout)
         # 提示
-        hint = QLabel("每行一条台词，留空行将被忽略")
+        hint = QLabel(T("每行一条台词，留空行将被忽略"))
         hint.setStyleSheet("color: gray; font-size: 11px;")
         layout.addWidget(hint)
         # 台词编辑区
         self.text_edit = QTextEdit()
-        self.text_edit.setPlaceholderText("在此输入台词，每行一条...")
+        self.text_edit.setPlaceholderText(T("在此输入台词，每行一条..."))
         layout.addWidget(self.text_edit, 1)
         # 统计
-        self.count_label = QLabel("共 0 条")
+        self.count_label = QLabel(T("共 0 条"))
         self.count_label.setStyleSheet("color: gray; font-size: 11px;")
         layout.addWidget(self.count_label)
         # 按钮
         btn_layout = QHBoxLayout()
-        reset_btn = QPushButton("恢复默认")
+        reset_btn = QPushButton(T("恢复默认"))
         reset_btn.clicked.connect(self._on_reset)
         btn_layout.addWidget(reset_btn)
         btn_layout.addStretch()
-        cancel_btn = QPushButton("取消")
+        cancel_btn = QPushButton(T("取消"))
         cancel_btn.clicked.connect(self.reject)
         btn_layout.addWidget(cancel_btn)
-        save_btn = QPushButton("保存")
+        save_btn = QPushButton(T("保存"))
         save_btn.clicked.connect(self._on_save)
         save_btn.setDefault(True)
         btn_layout.addWidget(save_btn)
@@ -735,7 +1010,7 @@ class LinesEditorDialog(QDialog):
     def _load_category(self, key):
         lines = self.lines_data.get(key, [])
         self.text_edit.setPlainText("\n".join(lines))
-        self.count_label.setText(f"共 {len(lines)} 条")
+        self.count_label.setText(T("共 {n} 条", n=len(lines)))
 
     def _save_current(self):
         text = self.text_edit.toPlainText()
@@ -759,7 +1034,7 @@ class LinesEditorDialog(QDialog):
                 json.dump(self.lines_data, f, ensure_ascii=False, indent=2)
             self.accept()
         except Exception as e:
-            QMessageBox.warning(self, "保存失败", str(e))
+            QMessageBox.warning(self, T("保存失败"), str(e))
 
 
 class SettingsDialog(QDialog):
@@ -769,18 +1044,18 @@ class SettingsDialog(QDialog):
     def __init__(self, pet, parent=None):
         super().__init__(parent)
         self.pet = pet
-        self.setWindowTitle(f"{pet.pet_name}设置")
+        self.setWindowTitle(T("{name}设置", name=pet.pet_name) if pet.pet_name else T("设置"))
         self.setFixedSize(340, 545)
 
         layout = QVBoxLayout()
         layout.setSpacing(8)
 
         # === 显示设置 ===
-        layout.addWidget(QLabel("🎨 显示设置"))
+        layout.addWidget(QLabel(T("🎨 显示设置")))
 
         # 透明度
         opacity_layout = QHBoxLayout()
-        opacity_layout.addWidget(QLabel("透明度："))
+        opacity_layout.addWidget(QLabel(T("透明度：")))
         self.opacity_slider = QSlider(Qt.Horizontal)
         self.opacity_slider.setRange(20, 100)
         self.opacity_slider.setValue(int(pet.manual_opacity * 100))
@@ -792,7 +1067,7 @@ class SettingsDialog(QDialog):
 
         # 缩放
         scale_layout = QHBoxLayout()
-        scale_layout.addWidget(QLabel("缩放比例："))
+        scale_layout.addWidget(QLabel(T("缩放比例：")))
         self.scale_slider = QSlider(Qt.Horizontal)
         self.scale_slider.setRange(10, 100)
         self.scale_slider.setValue(int(pet.target_scale * 100))
@@ -805,44 +1080,44 @@ class SettingsDialog(QDialog):
         layout.addSpacing(5)
 
         # === 功能开关 ===
-        layout.addWidget(QLabel("⚙️ 功能开关"))
+        layout.addWidget(QLabel(T("⚙️ 功能开关")))
 
-        self.chk_smart_opacity = QCheckBox("智能透明度（闲置自动变淡）")
+        self.chk_smart_opacity = QCheckBox(T("智能透明度（闲置自动变淡）"))
         self.chk_smart_opacity.setChecked(pet.smart_opacity)
         layout.addWidget(self.chk_smart_opacity)
 
-        self.chk_mouse_through = QCheckBox("鼠标穿透（透明区不拦截点击）")
+        self.chk_mouse_through = QCheckBox(T("鼠标穿透（透明区不拦截点击）"))
         self.chk_mouse_through.setChecked(pet.mouse_through)
         layout.addWidget(self.chk_mouse_through)
 
-        self.chk_bubble = QCheckBox("显示气泡台词")
+        self.chk_bubble = QCheckBox(T("显示气泡台词"))
         self.chk_bubble.setChecked(pet.bubble_enabled)
         layout.addWidget(self.chk_bubble)
 
-        self.chk_typing = QCheckBox("打字实时反应")
+        self.chk_typing = QCheckBox(T("打字实时反应"))
         self.chk_typing.setChecked(pet.typing_enabled)
         layout.addWidget(self.chk_typing)
 
-        self.chk_translate = QCheckBox("实时翻译（复制英文自动翻译）")
+        self.chk_translate = QCheckBox(T("实时翻译（复制英文自动翻译）"))
         self.chk_translate.setChecked(pet.translation_enabled)
         layout.addWidget(self.chk_translate)
 
-        self.chk_autostart = QCheckBox("开机自启动")
+        self.chk_autostart = QCheckBox(T("开机自启动"))
         self.chk_autostart.setChecked(pet.auto_start)
         layout.addWidget(self.chk_autostart)
 
-        self.chk_start_hidden = QCheckBox("启动时隐藏窗口（只在托盘显示）")
+        self.chk_start_hidden = QCheckBox(T("启动时隐藏窗口（只在托盘显示）"))
         self.chk_start_hidden.setChecked(pet.start_hidden)
-        self.chk_start_hidden.setToolTip("勾选后程序启动时不弹宠物窗口，只在系统托盘显示图标，点托盘图标再叫它出来")
+        self.chk_start_hidden.setToolTip(T("勾选后程序启动时不弹宠物窗口，只在系统托盘显示图标，点托盘图标再叫它出来"))
         layout.addWidget(self.chk_start_hidden)
 
-        self.chk_sound = QCheckBox("互动音效")
+        self.chk_sound = QCheckBox(T("互动音效"))
         self.chk_sound.setChecked(pet.sound_enabled)
         layout.addWidget(self.chk_sound)
 
         # 音量
         vol_layout = QHBoxLayout()
-        vol_layout.addWidget(QLabel("音量："))
+        vol_layout.addWidget(QLabel(T("音量：")))
         self.vol_slider = QSlider(Qt.Horizontal)
         self.vol_slider.setRange(0, 100)
         self.vol_slider.setValue(pet.sound_volume)
@@ -855,24 +1130,24 @@ class SettingsDialog(QDialog):
         layout.addSpacing(5)
 
         # === 外观设置 ===
-        layout.addWidget(QLabel("👗 外观设置"))
+        layout.addWidget(QLabel(T("👗 外观设置")))
 
         # 宠物名（台词里的 {name} 会替换成它）
         name_layout = QHBoxLayout()
-        name_layout.addWidget(QLabel("宠物名："))
+        name_layout.addWidget(QLabel(T("宠物名：")))
         self.name_edit = QLineEdit(pet.pet_name)
-        self.name_edit.setPlaceholderText("未命名（留空则自称「我」）")
+        self.name_edit.setPlaceholderText(T("未命名（留空则自称「我」）"))
         name_layout.addWidget(self.name_edit, 1)
         layout.addLayout(name_layout)
 
         skin_layout = QHBoxLayout()
-        skin_layout.addWidget(QLabel("形象："))
+        skin_layout.addWidget(QLabel(T("形象：")))
         self.skin_combo = QComboBox()
         self._skins = pet._get_available_skins()
         for skin in self._skins:
             display = skin.replace("pet_", "").replace(".png", "")
             if display == "transparent":
-                display = "默认"
+                display = T("默认")
             self.skin_combo.addItem(display, skin)
         # 设置当前选中
         idx = self.skin_combo.findData(pet.current_skin)
@@ -884,15 +1159,15 @@ class SettingsDialog(QDialog):
         layout.addSpacing(5)
 
         # === 快捷操作 ===
-        layout.addWidget(QLabel("🔧 快捷操作"))
+        layout.addWidget(QLabel(T("🔧 快捷操作")))
         btn_row = QHBoxLayout()
-        btn_reset_pos = QPushButton("重置位置")
+        btn_reset_pos = QPushButton(T("重置位置"))
         btn_reset_pos.clicked.connect(pet._reset_position)
         btn_row.addWidget(btn_reset_pos)
-        btn_reset_size = QPushButton("重置大小")
+        btn_reset_size = QPushButton(T("重置大小"))
         btn_reset_size.clicked.connect(pet._reset_size)
         btn_row.addWidget(btn_reset_size)
-        btn_edit_lines = QPushButton("编辑台词")
+        btn_edit_lines = QPushButton(T("编辑台词"))
         btn_edit_lines.clicked.connect(self._open_lines_file)
         btn_row.addWidget(btn_edit_lines)
         layout.addLayout(btn_row)
@@ -902,10 +1177,10 @@ class SettingsDialog(QDialog):
         # === 底部按钮 ===
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
-        ok_btn = QPushButton("确定")
+        ok_btn = QPushButton(T("确定"))
         ok_btn.clicked.connect(self._on_accept)
         btn_layout.addWidget(ok_btn)
-        cancel_btn = QPushButton("取消")
+        cancel_btn = QPushButton(T("取消"))
         cancel_btn.clicked.connect(self.reject)
         btn_layout.addWidget(cancel_btn)
         layout.addLayout(btn_layout)
@@ -1263,7 +1538,7 @@ class DesktopPet(QWidget):
         try:
             os.makedirs(target_dir, exist_ok=True)
         except Exception as e:
-            self._show_bubble("呜…文件夹建不了吖(>﹏<)")
+            self._show_bubble(T("呜…文件夹建不了吖(>﹏<)"))
             return
         # 显示储存中的台词
         self._play_sound("eat")
@@ -1291,7 +1566,7 @@ class DesktopPet(QWidget):
         # 延迟显示完成提示
         if saved_count > 0:
             QTimer.singleShot(2500, lambda: self._show_bubble(
-                f"吃掉{saved_count}个啦~都存在我的小窝里咯(≧∇≦)ﾉ"))
+                T("吃掉{n}个啦~都存在我的小窝里咯(≧∇≦)ﾉ", n=saved_count)))
 
     def _handle_click(self):
         self.last_interaction_time = time.time()
@@ -1459,7 +1734,7 @@ class DesktopPet(QWidget):
 
     def _show_bubble(self, text):
         # 台词里的 {name} 占位符换成宠物名；未命名时自称「我」
-        text = text.replace("{name}", self.pet_name or "我")
+        text = text.replace("{name}", self.pet_name or T("我"))
         # 气泡显示在宠物左侧，尾巴指向玫瑰花（避开头顶小人掉落区域）
         rose_x = self.x() + int(self.width() * 0.14)
         rose_y = self.y() + int(self.height() * 0.35)
@@ -1608,7 +1883,7 @@ class DesktopPet(QWidget):
                 self.anim_scale = 1.0
         yawn_step()
         if self.bubble_enabled:
-            QTimer.singleShot(300, lambda: self._show_bubble("（打哈欠）好困哦... 但是还想再陪你一会儿...zzz"))
+            QTimer.singleShot(300, lambda: self._show_bubble(T("（打哈欠）好困哦... 但是还想再陪你一会儿...zzz")))
 
     def _start_sleeping(self):
         # 休眠：透明度降低，缓慢浮动
@@ -1690,14 +1965,26 @@ class DesktopPet(QWidget):
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_SET_VALUE)
             exe_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
             if self.auto_start:
-                winreg.SetValueEx(key, "DesktopPet_Hana", 0, winreg.REG_SZ, f'"{exe_path}"')
+                winreg.SetValueEx(key, AUTOSTART_VALUE, 0, winreg.REG_SZ, f'"{exe_path}"')
+                # 迁移：清掉旧版本留下的 DesktopPet_Hana，
+                # 否则同一个程序会有两条自启动项，重复拉起。
+                self._delete_run_value(key, AUTOSTART_VALUE_LEGACY)
             else:
-                try:
-                    winreg.DeleteValue(key, "DesktopPet_Hana")
-                except FileNotFoundError:
-                    pass
+                self._delete_run_value(key, AUTOSTART_VALUE)
+                self._delete_run_value(key, AUTOSTART_VALUE_LEGACY)
             winreg.CloseKey(key)
         except:
+            pass
+
+    @staticmethod
+    def _delete_run_value(key, name):
+        """删除 Run 下的某个值，不存在就当成功"""
+        import winreg
+        try:
+            winreg.DeleteValue(key, name)
+        except FileNotFoundError:
+            pass
+        except OSError:
             pass
 
     def _greeting_by_time(self):
@@ -1892,7 +2179,7 @@ class DesktopPet(QWidget):
 
     def _detach(self, say_goodbye=False):
         if say_goodbye and self.bubble_enabled and self.attached_window and self.attached_window != "screen":
-            self._show_bubble("诶？窗口不见啦，{name}自己去玩咯～")
+            self._show_bubble(T("诶？窗口不见啦，{name}自己去玩咯～"))
         self.attached_window = None
         self.attached_side = None
         self.attach_timer.stop()
@@ -1974,39 +2261,39 @@ class DesktopPet(QWidget):
 
     def _update_context_menu(self):
         self.context_menu.clear()
-        act_settings = self.context_menu.addAction("⚙️ 设置...")
+        act_settings = self.context_menu.addAction(T("⚙️ 设置..."))
         act_settings.triggered.connect(self._show_settings_dialog)
         self.context_menu.addSeparator()
-        act_through = self.context_menu.addAction("鼠标穿透")
+        act_through = self.context_menu.addAction(T("鼠标穿透"))
         act_through.setCheckable(True)
         act_through.setChecked(self.mouse_through)
         act_through.triggered.connect(self._toggle_mouse_through)
-        act_bubble = self.context_menu.addAction("显示气泡")
+        act_bubble = self.context_menu.addAction(T("显示气泡"))
         act_bubble.setCheckable(True)
         act_bubble.setChecked(self.bubble_enabled)
         act_bubble.triggered.connect(self._toggle_bubble)
-        act_autostart = self.context_menu.addAction("开机自启动")
+        act_autostart = self.context_menu.addAction(T("开机自启动"))
         act_autostart.setCheckable(True)
         act_autostart.setChecked(self.auto_start)
         act_autostart.triggered.connect(self._toggle_auto_start)
         self.context_menu.addSeparator()
-        act_lookup = self.context_menu.addAction("查单词...")
+        act_lookup = self.context_menu.addAction(T("查单词..."))
         act_lookup.triggered.connect(self._lookup_word)
-        act_export = self.context_menu.addAction("导出生词本")
+        act_export = self.context_menu.addAction(T("导出生词本"))
         act_export.triggered.connect(self._export_vocab)
-        act_translate = self.context_menu.addAction("📖 实时翻译")
+        act_translate = self.context_menu.addAction(T("📖 实时翻译"))
         act_translate.setCheckable(True)
         act_translate.setChecked(self.translation_enabled)
         act_translate.triggered.connect(self._toggle_translation)
         self.context_menu.addSeparator()
-        act_screenshot = self.context_menu.addAction("📷 全屏截图")
+        act_screenshot = self.context_menu.addAction(T("📷 全屏截图"))
         act_screenshot.triggered.connect(self._take_screenshot)
-        act_region = self.context_menu.addAction("✂️ 区域截图")
+        act_region = self.context_menu.addAction(T("✂️ 区域截图"))
         act_region.triggered.connect(self._take_region_screenshot)
         self.context_menu.addSeparator()
-        act_hide = self.context_menu.addAction("隐藏到托盘")
+        act_hide = self.context_menu.addAction(T("隐藏到托盘"))
         act_hide.triggered.connect(self.hide)
-        act_exit = self.context_menu.addAction("退出")
+        act_exit = self.context_menu.addAction(T("退出"))
         act_exit.triggered.connect(self._quit)
 
     def _get_available_skins(self):
@@ -2054,7 +2341,7 @@ class DesktopPet(QWidget):
         self._apply_scale()
         self._save_config()
         if self.bubble_enabled:
-            self._show_bubble("换新衣服啦～好看吗💗")
+            self._show_bubble(T("换新衣服啦～好看吗💗"))
 
     def _reset_position(self):
         self._detach()  # 先脱离攀附，避免被attach_timer拉回
@@ -2128,7 +2415,7 @@ class DesktopPet(QWidget):
                 json.dump(vocab, f, ensure_ascii=False, indent=2)
             return True
         except Exception as e:
-            self._show_bubble(f"生词本保存失败：{str(e)[:20]}")
+            self._show_bubble(T("生词本保存失败：{e}", e=str(e)[:20]))
             return False
 
     def _add_to_vocab(self, word, meaning):
@@ -2143,10 +2430,10 @@ class DesktopPet(QWidget):
         self.typing_enabled = not self.typing_enabled
         if self.typing_enabled:
             self._start_keyboard_hook()
-            self._show_bubble("打字反应已开启～打字时{name}会陪你哦⌨️")
+            self._show_bubble(T("打字反应已开启～打字时{name}会陪你哦⌨️"))
         else:
             self._stop_keyboard_hook()
-            self._show_bubble("打字反应已关闭")
+            self._show_bubble(T("打字反应已关闭"))
         self._update_context_menu()
         self._save_config()
 
@@ -2299,13 +2586,13 @@ class DesktopPet(QWidget):
                 pass
             clipboard.dataChanged.connect(self._on_clipboard_changed, Qt.UniqueConnection)
             self._last_translated_text = clipboard.text()
-            self._show_bubble("实时翻译已开启～复制英文就会翻译哦📖")
+            self._show_bubble(T("实时翻译已开启～复制英文就会翻译哦📖"))
         else:
             try:
                 clipboard.dataChanged.disconnect(self._on_clipboard_changed)
             except Exception:
                 pass
-            self._show_bubble("实时翻译已关闭")
+            self._show_bubble(T("实时翻译已关闭"))
 
     def _init_translation_clipboard(self):
         if self.translation_enabled:
@@ -2352,7 +2639,7 @@ class DesktopPet(QWidget):
             display = f"📖 {original}\n→ {translated}"
             self._show_bubble(display)
         elif not translated:
-            self._show_bubble("翻译失败了，稍后再试试吧～")
+            self._show_bubble(T("翻译失败了，稍后再试试吧～"))
         # 清理线程
         self._cleanup_translation_threads()
 
@@ -2394,11 +2681,11 @@ class DesktopPet(QWidget):
                 uk = w.get("ukphone", "")
                 us = w.get("usphone", "")
                 if uk and us:
-                    phonetic = f"英 /{uk}/ 美 /{us}/"
+                    phonetic = T("英 /{uk}/ 美 /{us}/", uk=uk, us=us)
                 elif uk:
-                    phonetic = f"英 /{uk}/"
+                    phonetic = T("英 /{uk}/", uk=uk)
                 elif us:
-                    phonetic = f"美 /{us}/"
+                    phonetic = T("美 /{us}/", us=us)
             # 解析释义
             meanings = []
             trs = word_data[0].get("trs", []) if word_data else []
@@ -2415,23 +2702,23 @@ class DesktopPet(QWidget):
                 if web_trans:
                     for t in web_trans[0].get("trans", []):
                         meanings.append(t.get("value", ""))
-            return phonetic, "\n".join(meanings[:5]) if meanings else "未找到释义"
+            return phonetic, "\n".join(meanings[:5]) if meanings else T("未找到释义")
         except Exception as e:
-            return "", f"查询失败：{str(e)[:30]}"
+            return "", T("查询失败：{e}", e=str(e)[:30])
 
     def _lookup_word(self):
         # 用独立对话框，避免受宠物窗口鼠标穿透影响
         dlg = QInputDialog()
         dlg.setWindowFlags(dlg.windowFlags() | Qt.WindowStaysOnTopHint)
-        dlg.setWindowTitle("查单词")
-        dlg.setLabelText("输入要查询的单词：")
+        dlg.setWindowTitle(T("查单词"))
+        dlg.setLabelText(T("输入要查询的单词："))
         dlg.setTextValue("")
         if dlg.exec() != QDialog.Accepted:
             return
         word = dlg.textValue().strip()
         if not word:
             return
-        self._show_bubble(f"正在查询「{word}」...")
+        self._show_bubble(T("正在查询「{w}」...", w=word))
         # 用线程查询避免卡顿（用列表保存引用，防止被GC回收）
         thread = _LookupThread(word, self)
         thread.lookup_done.connect(self._on_lookup_done, Qt.QueuedConnection)
@@ -2441,7 +2728,7 @@ class DesktopPet(QWidget):
     def _on_lookup_done(self, word, phonetic, meaning):
         text = f"{word}\n{meaning}"
         self._show_bubble(text)
-        if meaning and "未找到释义" not in meaning and "查询失败" not in meaning:
+        if meaning and T("未找到释义") not in meaning and T("查询失败") not in meaning:
             self._add_to_vocab(word, meaning)
         # 清理已完成的查单词线程
         try:
@@ -2458,34 +2745,60 @@ class DesktopPet(QWidget):
     def _show_vocab_book(self):
         vocab = self._load_vocab()
         if not vocab:
-            self._show_bubble("生词本还是空的哦～快去查单词吧！")
+            self._show_bubble(T("生词本还是空的哦～快去查单词吧！"))
             return
         # 按时间倒序
         items = sorted(vocab.items(), key=lambda x: x[1].get("time", ""), reverse=True)
-        lines = [f"📖 生词本（共{len(items)}词）"]
+        lines = [T("📖 生词本（共{n}词）", n=len(items))]
         for w, info in items[:20]:
             m = info.get("meaning", "")[:40]
             lines.append(f"{w} — {m}")
         if len(items) > 20:
-            lines.append(f"...还有{len(items)-20}个词")
+            lines.append(T("...还有{n}个词", n=len(items) - 20))
         self._show_bubble("\n".join(lines))
 
     def _export_vocab(self):
         vocab = self._load_vocab()
         if not vocab:
-            self._show_bubble("生词本还是空的哦～")
+            self._show_bubble(T("生词本还是空的哦～"))
             return
         items = sorted(vocab.items(), key=lambda x: x[1].get("time", ""), reverse=True)
-        html_path = os.path.join(os.path.dirname(VOCAB_PATH), "生词本.html")
+        html_path = os.path.join(os.path.dirname(VOCAB_PATH), T("生词本.html"))
         # 把数据嵌入JSON供JS使用
         vocab_json = json.dumps(vocab, ensure_ascii=False)
+        # 页面文案统一在这里取，英文版整页就是英文。
+        # 注意：模板里引用一律用单引号（f-string 表达式内不能出现同种引号，
+        # 否则 Python 3.11 及更早会语法报错）。
+        L = {
+            "title": T("生词本"),
+            "count": T("共 {n} 个单词"),
+            "file": T("📁 生词本文件：{p}", p=VOCAB_PATH),
+            "refresh": T("↺ 刷新"),
+            "selectAll": T("☑ 全选"),
+            "batchDelete": T("🗑 批量删除"),
+            "colWord": T("单词"),
+            "colMeaning": T("释义"),
+            "colTime": T("添加时间"),
+            "colOps": T("操作"),
+            "delete": T("删除"),
+            "confirmDel": T("确定删除「{w}」吗？"),
+            "confirmBatch": T("确定删除选中的 {n} 个单词吗？"),
+            "deleted": T("已删除，下次导出自动生效 ✅"),
+            "deletedN": T("已删除 {n} 个单词 ✅"),
+            "delFailed": T("删除失败，请确保桌宠正在运行"),
+            "pickFirst": T("请先勾选要删除的单词"),
+            "refreshed": T("已刷新"),
+            "refreshFailed": T("刷新失败，请确保桌宠正在运行"),
+        }
+        count_text = L["count"].replace("{n}", str(len(items)))
+        js_L = json.dumps(L, ensure_ascii=False)
         html = f"""<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{T('zh-CN')}">
 <head>
 <meta charset="UTF-8">
-<title>生词本</title>
+<title>{L['title']}</title>
 <style>
-body {{ font-family: "Microsoft YaHei", sans-serif; background: #fff5f8; margin: 0; padding: 30px; }}
+body {{ font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: #fff5f8; margin: 0; padding: 30px; }}
 h1 {{ color: #e91e63; text-align: center; }}
 .container {{ max-width: 850px; margin: 0 auto; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
 .count {{ text-align: center; color: #888; margin-bottom: 8px; }}
@@ -2510,22 +2823,23 @@ tr:hover {{ background: #fafafa; }}
 <body>
 <div class="toast" id="toast"></div>
 <div class="container">
-<h1>🌸 生词本</h1>
-<p class="count" id="count">共 {len(items)} 个单词</p>
-<p class="filepath">📁 生词本文件：{VOCAB_PATH}</p>
+<h1>🌸 {L['title']}</h1>
+<p class="count" id="count">{count_text}</p>
+<p class="filepath">{L['file']}</p>
 <div class="toolbar">
-<button class="btn btn-gray" onclick="refresh()">↺ 刷新</button>
-<button class="btn btn-gray" onclick="toggleAll()">☑ 全选</button>
-<button class="btn" onclick="batchDelete()">🗑 批量删除</button>
+<button class="btn btn-gray" onclick="refresh()">{L['refresh']}</button>
+<button class="btn btn-gray" onclick="toggleAll()">{L['selectAll']}</button>
+<button class="btn" onclick="batchDelete()">{L['batchDelete']}</button>
 </div>
 <table>
-<thead><tr><th><input type="checkbox" id="checkAll" onclick="toggleAll()"></th><th>#</th><th>单词</th><th>释义</th><th>添加时间</th><th>操作</th></tr></thead>
+<thead><tr><th><input type="checkbox" id="checkAll" onclick="toggleAll()"></th><th>#</th><th>{L['colWord']}</th><th>{L['colMeaning']}</th><th>{L['colTime']}</th><th>{L['colOps']}</th></tr></thead>
 <tbody id="tbody">
 </tbody>
 </table>
 </div>
 <script>
 let vocab = {vocab_json};
+const L = {js_L};
 
 function render() {{
     let tbody = document.getElementById('tbody');
@@ -2536,22 +2850,22 @@ function render() {{
         let m = (info.meaning || '').replace(/\\n/g, '<br>');
         let t = info.time || '';
         let tr = document.createElement('tr');
-        tr.innerHTML = `<td><input type="checkbox" class="word-check" data-word="${{w}}"></td><td>${{i+1}}</td><td class="word">${{w}}</td><td>${{m}}</td><td class="time">${{t}}</td><td><button class="del-btn" onclick="delWord('${{w.replace(/'/g,"\\\\'")}}')">删除</button></td>`;
+        tr.innerHTML = `<td><input type="checkbox" class="word-check" data-word="${{w}}"></td><td>${{i+1}}</td><td class="word">${{w}}</td><td>${{m}}</td><td class="time">${{t}}</td><td><button class="del-btn" onclick="delWord('${{w.replace(/'/g,"\\\\'")}}')">${{L.delete}}</button></td>`;
         tbody.appendChild(tr);
     }});
-    document.getElementById('count').textContent = '共 ' + items.length + ' 个单词';
+    document.getElementById('count').textContent = L.count.replace('{{n}}', items.length);
 }}
 
 function delWord(w) {{
-    if (!confirm('确定删除「' + w + '」吗？')) return;
+    if (!confirm(L.confirmDel.replace('{{w}}', w))) return;
     fetch('http://127.0.0.1:{self._vocab_port}/delete?word=' + encodeURIComponent(w))
         .then(() => {{
             delete vocab[w];
             render();
-            showToast('已删除，下次导出自动生效 ✅');
+            showToast(L.deleted);
         }})
         .catch(() => {{
-            showToast('删除失败，请确保桌宠正在运行');
+            showToast(L.delFailed);
         }});
 }}
 
@@ -2562,8 +2876,8 @@ function toggleAll() {{
 
 function batchDelete() {{
     let selected = Array.from(document.querySelectorAll('.word-check:checked')).map(cb => cb.dataset.word);
-    if (selected.length === 0) {{ showToast('请先勾选要删除的单词'); return; }}
-    if (!confirm('确定删除选中的 ' + selected.length + ' 个单词吗？')) return;
+    if (selected.length === 0) {{ showToast(L.pickFirst); return; }}
+    if (!confirm(L.confirmBatch.replace('{{n}}', selected.length))) return;
     let done = 0;
     selected.forEach(w => {{
         fetch('http://127.0.0.1:{self._vocab_port}/delete?word=' + encodeURIComponent(w))
@@ -2573,10 +2887,10 @@ function batchDelete() {{
                 if (done === selected.length) {{
                     render();
                     document.getElementById('checkAll').checked = false;
-                    showToast('已删除 ' + done + ' 个单词 ✅');
+                    showToast(L.deletedN.replace('{{n}}', done));
                 }}
             }})
-            .catch(() => showToast('删除失败，请确保桌宠正在运行'));
+            .catch(() => showToast(L.delFailed));
     }});
 }}
 
@@ -2586,9 +2900,9 @@ function refresh() {{
         .then(data => {{
             vocab = data;
             render();
-            showToast('已刷新');
+            showToast(L.refreshed);
         }})
-        .catch(() => showToast('刷新失败，请确保桌宠正在运行'));
+        .catch(() => showToast(L.refreshFailed));
 }}
 
 function showToast(msg) {{
@@ -2606,9 +2920,9 @@ render();
             with open(html_path, "w", encoding="utf-8") as f:
                 f.write(html)
             os.startfile(html_path)
-            self._show_bubble(f"生词本已导出，共{len(items)}个词～")
+            self._show_bubble(T("生词本已导出，共{n}个词～", n=len(items)))
         except Exception as e:
-            self._show_bubble(f"导出失败：{str(e)[:20]}")
+            self._show_bubble(T("导出失败：{e}", e=str(e)[:20]))
 
     def _take_screenshot(self):
         """全屏截图"""
@@ -2617,7 +2931,7 @@ render();
             pixmap = screen.grabWindow(0)
             self._handle_screenshot_result(pixmap)
         except Exception as e:
-            self._show_bubble(f"截屏失败：{str(e)[:20]}")
+            self._show_bubble(T("截屏失败：{e}", e=str(e)[:20]))
 
     def _take_region_screenshot(self):
         """区域截图"""
@@ -2626,7 +2940,7 @@ render();
             QTimer.singleShot(200, self._show_region_selector)
         except Exception as e:
             self.show()
-            self._show_bubble(f"截屏失败：{str(e)[:20]}")
+            self._show_bubble(T("截屏失败：{e}", e=str(e)[:20]))
 
     def _show_region_selector(self):
         self._region_selector = RegionSelector()
@@ -2643,7 +2957,7 @@ render();
             self._handle_screenshot_result(pixmap)
         except Exception as e:
             self.show()
-            self._show_bubble(f"截屏失败：{str(e)[:20]}")
+            self._show_bubble(T("截屏失败：{e}", e=str(e)[:20]))
 
     def _on_region_canceled(self):
         self.show()
@@ -2651,9 +2965,9 @@ render();
     def _handle_screenshot_result(self, pixmap):
         """截图后弹出选择菜单：保存/复制/都要"""
         menu = QMenu()
-        act_save = menu.addAction("💾 仅保存")
-        act_copy = menu.addAction("📋 仅复制")
-        act_both = menu.addAction("💾📋 保存并复制")
+        act_save = menu.addAction(T("💾 仅保存"))
+        act_copy = menu.addAction(T("📋 仅复制"))
+        act_both = menu.addAction(T("💾📋 保存并复制"))
         action = menu.exec(QCursor.pos())
         save_dir = os.path.join(DATA_DIR, "screenshots")
         saved = False
@@ -2661,7 +2975,7 @@ render();
         if action in (act_save, act_both):
             os.makedirs(save_dir, exist_ok=True)
             timestamp = time.strftime("%Y%m%d_%H%M%S")
-            filepath = os.path.join(save_dir, f"截图_{timestamp}.png")
+            filepath = os.path.join(save_dir, T("截图_{ts}.png", ts=timestamp))
             pixmap.save(filepath, "PNG")
             saved = True
         if action in (act_copy, act_both):
@@ -2669,11 +2983,11 @@ render();
             copied = True
         self._shake_animation()
         if saved and copied:
-            self._show_bubble("咔嚓～已保存并复制到剪贴板📷")
+            self._show_bubble(T("咔嚓～已保存并复制到剪贴板📷"))
         elif saved:
-            self._show_bubble("咔嚓～截图已保存📷")
+            self._show_bubble(T("咔嚓～截图已保存📷"))
         elif copied:
-            self._show_bubble("咔嚓～已复制到剪贴板📋")
+            self._show_bubble(T("咔嚓～已复制到剪贴板📋"))
 
     def _play_sound(self, sound_type):
         """播放音效（用winsound.Beep生成简单音效，独立线程避免阻塞）"""
@@ -2757,7 +3071,7 @@ render();
         # 宠物名（台词里的 {name} 占位符运行时替换）
         if "pet_name" in changes and changes["pet_name"] != self.pet_name:
             self.pet_name = changes["pet_name"]
-            self.tray.setToolTip(f"桌面宠物 - {self.pet_name}")
+            self.tray.setToolTip(T("桌面宠物 - {n}", n=self.pet_name))
         self._update_context_menu()
         self._save_config()
 
@@ -2774,20 +3088,20 @@ render();
         self.tray = QSystemTrayIcon(self)
         icon = QIcon(PET_IMAGE)
         self.tray.setIcon(icon)
-        self.tray.setToolTip(f"桌面宠物 - {self.pet_name}")
+        self.tray.setToolTip(T("桌面宠物 - {n}", n=self.pet_name))
         tray_menu = QMenu()
-        act_settings = tray_menu.addAction("⚙️ 设置...")
+        act_settings = tray_menu.addAction(T("⚙️ 设置..."))
         act_settings.triggered.connect(self._show_settings_dialog)
-        act_show = tray_menu.addAction("显示/隐藏宠物")
+        act_show = tray_menu.addAction(T("显示/隐藏宠物"))
         act_show.triggered.connect(self._toggle_visible)
-        act_autostart = tray_menu.addAction("开机自启动")
+        act_autostart = tray_menu.addAction(T("开机自启动"))
         act_autostart.setCheckable(True)
         act_autostart.setChecked(self.auto_start)
         act_autostart.triggered.connect(self._toggle_auto_start)
-        act_restart = tray_menu.addAction("重启")
+        act_restart = tray_menu.addAction(T("重启"))
         act_restart.triggered.connect(self._restart)
         tray_menu.addSeparator()
-        act_exit = tray_menu.addAction("退出")
+        act_exit = tray_menu.addAction(T("退出"))
         act_exit.triggered.connect(self._quit)
         self.tray.setContextMenu(tray_menu)
         self.tray.activated.connect(self._on_tray_activated)
@@ -2829,8 +3143,8 @@ if __name__ == "__main__":
         # 启动时只在托盘显示。Windows 可能把图标折叠进「隐藏的图标」，
         # 所以弹一次气泡告诉用户去哪找。
         pet.tray.showMessage(
-            "桌面宠物",
-            "我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来",
+            T("桌面宠物"),
+            T("我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来"),
             QSystemTrayIcon.Information,
             4000,
         )

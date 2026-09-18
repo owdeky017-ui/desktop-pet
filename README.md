@@ -14,18 +14,24 @@
 
 不想配环境？直接从 Releases 拿打包好的版本：
 
-👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)** — 下 `DesktopPet-v69-windows.zip`，解压到同一个文件夹，双击 `DesktopPet_v69.exe` 即可，免安装。
+👉 **[Releases · v6.9](https://github.com/owdeky017-ui/desktop-pet/releases/tag/v6.9)**
 
-压缩包里有这些东西：
+发布包分中英两个版本，各自独立，**界面、菜单、设置和宠物台词完全用各自语言**：
+
+| 版本 | 压缩包 | 主程序 | 界面语言 | 附带说明 |
+| --- | --- | --- | --- | --- |
+| 中文版 | `DesktopPet-v69-windows.zip` | `DesktopPet_v69.exe` | 中文 | `使用说明.txt` |
+| 英文版 | `DesktopPet-v69-windows-en.zip` | `DesktopPet_v69_en.exe` | 英文 | `Instructions.txt` |
+
+解压到同一个文件夹，双击对应版本的 exe 即可，免安装。两个版本可以放在同一个文件夹里，互不干扰。
+
+压缩包里除了主程序和说明，还有 6 张占位形象：
 
 | 文件 | 说明 |
 | --- | --- |
-| `DesktopPet_v69.exe` | 主程序（已内嵌占位形象，单独双击就能跑） |
 | `pet_transparent.png`<br>`mini_1.png` ~ `mini_5.png` | 默认的占位形象 PNG —— 直接改这些图就能换形象，改完放回 exe 旁边 |
-| `使用说明.txt` | 换图、改宠物名等操作步骤（中文） |
-| `使用说明_EN.txt` | 同上，英文版 |
 
-> **注意：下载下来看到的不是上面的预览图。** 预览图是作者自绘的成品形象（仅作示意），发布包内嵌的是占位形象（粉色小熊），要把占位图换成作者那套或你自己的图，看压缩包里的 `使用说明.txt`。
+> **注意：下载下来看到的不是上面的预览图。** 预览图是作者自绘的成品形象（仅作示意），发布包内嵌的是占位形象（粉色小熊），要把占位图换成作者那套或你自己的图，看压缩包里的说明文件。
 
 ---
 
@@ -82,6 +88,27 @@ pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69 ^
 想内嵌自己的素材，把上面 `placeholder\` 换成你自己的文件路径即可（见下节）。
 
 打包完成后 `DesktopPet_v69.exe` 单独一个文件就能跑（素材已内嵌）。想让别人也能换图，就把 PNG 一并放进压缩包 —— 见下节。
+
+### 打包英文版
+
+界面语言由**打包时内嵌的 `lang.txt`** 决定，不是运行时切换的：里面写 `en` 就是英文版，没有这个文件（或写 `zh`）就是中文版。
+
+```bash
+# 准备语言标记文件
+mkdir build_lang_en
+echo en > build_lang_en\lang.txt
+
+# 打包英文版：多一行 --add-data 把 lang.txt 放进包根目录
+pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69_en ^
+  --add-data "build_lang_en\lang.txt;." ^
+  --add-data "placeholder\pet_transparent.png;." ^
+  ...（其余 5 张 mini 同上）...
+  main.py
+```
+
+> 文件名必须是 `lang.txt`（`--add-data` 的目标目录不会重命名文件），所以中文版和英文版要分别放在不同目录下准备。
+
+代码里的做法是：所有界面文案都写成 `T("中文原文")`，`T()` 在中文版原样返回、英文版查 `EN` 表替换。台词库、菜单、设置面板、气泡、生词本导出页都走这一层。**中文版的输出与加入多语言之前逐字一致。**
 
 ---
 
@@ -141,7 +168,9 @@ DesktopPet_v69.exe
 
 ## 自启动
 
-右键 → 开机自启动，会在注册表 `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` 写一条 `DesktopPet_Hana`。
+右键 → 开机自启动，会在注册表 `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` 写一条 `DesktopPet_Pet`。
+
+> 旧版本（≤ v6.9 早期构建）用的是 `DesktopPet_Hana`。程序写入新键时会自动把旧键删掉，不会出现两条自启动项重复拉起。
 
 ---
 
@@ -172,8 +201,8 @@ DesktopPet_v69.exe
 ├── 生词本.html          # 导出生词本的样例输出（演示用，无真实数据）
 ├── README.md            # 本文件（中文）
 ├── README_EN.md         # 英文说明
-├── 使用说明.txt         # 随发布包附带的说明（中文）
-└── 使用说明_EN.txt      # 随发布包附带的说明（英文）
+├── 使用说明.txt         # 中文版发布包附带的说明
+└── Instructions.txt     # 英文版发布包附带的说明
 ```
 
 ---

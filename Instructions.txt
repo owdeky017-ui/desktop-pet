@@ -1,35 +1,36 @@
 ==========================================================
-  Desktop Pet v6.9 · User Guide (English)
+  Desktop Pet v6.9 · User Guide (English build)
 ==========================================================
-
-  For the Chinese version, see 使用说明.txt in the same folder.
 
 
 1. HOW TO RUN
 
-Unzip everything into ONE folder, then double-click DesktopPet_v69.exe.
+Unzip everything into ONE folder, then double-click DesktopPet_v69_en.exe.
 No installer, no Python required.
+
+This is the English build — the right-click menu, the settings window, the
+tray menu and the pet's dialogue are all in English. A Chinese build is
+published as a separate download (DesktopPet-v69-windows.zip).
 
 
 2. WHAT'S IN THE FOLDER
 
-  DesktopPet_v69.exe    the app
+  DesktopPet_v69_en.exe  the app
 
-  pet_transparent.png   main sprite (also the system tray icon)
+  pet_transparent.png    main sprite (also the system tray icon)
   mini_1.png
-  mini_2.png            mini characters that drop from the sky on
-  mini_3.png            double-click (one of the 5 is picked at random)
+  mini_2.png             mini characters that drop from the sky on
+  mini_3.png             double-click (one of the 5 is picked at random)
   mini_4.png
   mini_5.png
-  使用说明_EN.txt       this file
-  使用说明.txt          Chinese version
+  Instructions.txt       this file
 
   These 6 images are already embedded inside the exe, so the app still
   displays even if you delete them. They're included in the zip so you have
   a reference for size and format when making your own.
 
-  On first run the app creates a data/ folder next to the exe. Your vocab
-  book, dialogue library, logs, and screenshots all go in there — nothing is
+  On first run the app creates a data/ folder next to the exe. Your word
+  list, dialogue library, logs, and screenshots all go in there — nothing is
   scattered elsewhere. Window position and settings live in pet_config.json
   next to the exe (NOT inside data/).
 
@@ -53,7 +54,7 @@ Step 2: Rename them exactly as follows
   Fewer than 5 minis is fine — it just picks randomly among the ones present.
 
 Step 3: Overwrite and restart
-  Copy the renamed images into the folder containing DesktopPet_v69.exe,
+  Copy the renamed images into the folder containing DesktopPet_v69_en.exe,
   overwrite the existing files, then restart the app.
 
   *** Images MUST be in the SAME folder as the exe ***
@@ -64,27 +65,27 @@ Step 3: Overwrite and restart
   Name extra images pet_<anything>.png (for example pet_pajamas.png),
   put them next to the exe, then:
 
-      right-click the pet -> Settings -> Skin
+      right-click the pet -> ⚙️ Settings... -> Skin
 
   They'll show up in the dropdown and you can switch between them.
+  The built-in one is listed as "Default".
 
 
 ==========================================================
   4. RENAMING YOUR PET
 ==========================================================
 
-  Right-click the pet -> Settings -> type a new name into the "宠物名"
-  (pet name) box -> OK.
+  Right-click the pet -> ⚙️ Settings... -> type a new name into the
+  "Pet name:" box -> OK.
 
   Takes effect immediately, no restart needed. The {name} placeholder in the
   dialogue lines resolves to the new name, and the tray tooltip updates too.
 
-  Leaving the box empty makes the pet refer to itself as 我 (the Chinese word
-  for "I" — the {name} placeholder resolves to 我).
+  Leaving the box empty makes the pet refer to itself as "I".
 
   You can also edit "pet_name" in pet_config.json next to the exe:
 
-      { "pet_name": "小豆丁" }
+      { "pet_name": "Buddy" }
 
   (Note: it's the pet_config.json BESIDE the exe, not the one inside data\.)
 
@@ -93,18 +94,18 @@ Step 3: Overwrite and restart
   5. STARTS IN THE TRAY
 ==========================================================
 
-  By default the pet window is HIDDEN after you double-click the exe — only
-  a small icon shows in the system tray at the bottom-right of the screen,
-  so it doesn't take over your desktop.
+  By default the pet window is HIDDEN after you launch the app — only a
+  small icon shows in the system tray at the bottom-right of the screen, so
+  it doesn't take over your desktop.
 
   To bring it out:
     - Click the tray icon, or
-    - Right-click the tray icon -> Show/hide pet.
+    - Right-click the tray icon -> Show / hide pet.
 
   To have the pet appear on the desktop at launch instead:
-    Right-click the tray icon -> Settings -> uncheck
-    「启动时隐藏窗口（只在托盘显示）」 ("hide window on startup, tray only")
-    -> OK. The pet window will show on launch from then on.
+    Right-click the tray icon -> ⚙️ Settings... -> uncheck
+    "Hide window on startup (tray only)" -> OK.
+    The pet window will show on launch from then on.
 
 
   *** TRAY ICON MISSING? ***
@@ -138,11 +139,15 @@ A: The image isn't a transparent PNG, or the file is corrupt. Copy the
 
 Q: The pet disappeared?
 A: It may have been dragged off-screen, or hidden via the tray. Look at the
-   tray icon at the bottom-right and right-click -> Show.
+   tray icon at the bottom-right and right-click -> Show / hide pet.
 
 Q: How do I restore the default sprite?
 A: Unzip the zip again and copy the 6 PNGs back over yours.
 
-Q: Where are my vocab book and screenshots?
+Q: Where are my word list and screenshots?
 A: In the data\ folder next to the exe. Delete the whole data\ folder to
    reset to the initial state.
+
+Q: I unchecked "Hide window on startup" but it still starts hidden?
+A: Make sure you clicked OK in the settings window — the change is only
+   written when you confirm.
