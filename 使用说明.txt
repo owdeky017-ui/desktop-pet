@@ -2,6 +2,9 @@
   桌面宠物 Desktop Pet v6.9 · 使用说明
 ==========================================================
 
+  英文版请见同一文件夹里的「使用说明_EN.txt」。
+
+
 【一、怎么运行】
 
 把压缩包里的所有文件解压到【同一个文件夹】，双击 DesktopPet_v69.exe。
@@ -18,7 +21,8 @@
   mini_3.png
   mini_4.png
   mini_5.png
-  使用说明.txt          本文件
+  使用说明.txt          本文件（中文）
+  使用说明_EN.txt       英文版说明
 
   exe 内部已经内置了这 6 张图，所以即使把它们删掉，程序照样能显示。
   压缩包里另外放一份，是为了方便你照着尺寸和格式改成自己的图。
@@ -133,39 +137,3 @@ A: 重新解压一次压缩包，把里面的 6 张 PNG 复制回来覆盖即可
 
 Q: 生词本、截图存在哪？
 A: 都在 exe 旁边的 data\ 文件夹里。整个 data\ 删掉就会恢复初始状态。
-
-
-----------------------------------------------------------
-  English (short version)
-----------------------------------------------------------
-
-Run: unzip everything into ONE folder, then double-click DesktopPet_v69.exe.
-No installer, no Python required.
-
-Replace the sprites:
-  1. Prepare PNGs with transparent backgrounds (opaque backgrounds render
-     as a white box).
-  2. Rename them exactly: pet_transparent.png (main sprite, also the tray
-     icon) and mini_1.png ... mini_5.png (the little characters).
-     Fewer than 5 minis is fine.
-  3. Copy them into the SAME folder as the exe, overwrite, and restart.
-     Images inside a subfolder are ignored.
-
-Extra skins: name them pet_<anything>.png, drop them next to the exe, then
-right-click the pet -> Settings -> Skin to switch.
-
-Rename your pet: right-click the pet -> Settings -> type a new name into the
-"宠物名" (pet name) box -> OK. Takes effect immediately, no restart needed.
-You can also edit "pet_name" in pet_config.json next to the exe.
-
-Tray: the pet window is hidden on startup by default — only the tray icon
-shows. Click it (or right-click -> Show/hide pet) to bring the pet out. To
-show the window on launch instead: right-click -> Settings -> uncheck
-"启动时隐藏窗口（只在托盘显示）".
-
-Tray icon missing? Windows folds unused icons into the taskbar's "hidden
-icons" overflow (the up arrow) — click it to find the pet. To pin it:
-Settings -> Personalization -> Taskbar -> Taskbar corner overflow, then turn
-Desktop Pet on. That's a Windows setting the app can't set for you.
-
-Your data (vocab book, config, screenshots) lives in data\ next to the exe.

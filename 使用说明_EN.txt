@@ -1,0 +1,147 @@
+==========================================================
+  Desktop Pet v6.9 · User Guide (English)
+==========================================================
+
+  For the Chinese version, see 使用说明.txt in the same folder.
+
+
+1. HOW TO RUN
+
+Unzip everything into ONE folder, then double-click DesktopPet_v69.exe.
+No installer, no Python required.
+
+
+2. WHAT'S IN THE FOLDER
+
+  DesktopPet_v69.exe    the app
+
+  pet_transparent.png   main sprite (also the system tray icon)
+  mini_1.png
+  mini_2.png            mini characters that drop from the sky on
+  mini_3.png            double-click (one of the 5 is picked at random)
+  mini_4.png
+  mini_5.png
+  使用说明_EN.txt       this file
+  使用说明.txt          Chinese version
+
+  These 6 images are already embedded inside the exe, so the app still
+  displays even if you delete them. They're included in the zip so you have
+  a reference for size and format when making your own.
+
+  On first run the app creates a data/ folder next to the exe. Your vocab
+  book, config, and screenshots all go in there — nothing is scattered
+  elsewhere.
+
+
+==========================================================
+  3. SWAPPING IN YOUR OWN IMAGES (3 STEPS)
+==========================================================
+
+Step 1: Prepare the images
+  - Must be PNG with a transparent background
+    (an opaque background renders as a white box)
+  - Any size works; the app displays at the image's native size and you can
+    scroll-zoom afterwards. Around 500x500 is a good size for the main sprite.
+
+Step 2: Rename them exactly as follows
+
+      your main sprite  ->  pet_transparent.png
+      mini 1~5          ->  mini_1.png  mini_2.png  mini_3.png
+                           mini_4.png  mini_5.png
+
+  Fewer than 5 minis is fine — it just picks randomly among the ones present.
+
+Step 3: Overwrite and restart
+  Copy the renamed images into the folder containing DesktopPet_v69.exe,
+  overwrite the existing files, then restart the app.
+
+  *** Images MUST be in the SAME folder as the exe ***
+  *** Putting them in a subfolder (e.g. sprites\) will NOT work ***
+
+
+  Want to keep several skins at once?
+  Name extra images pet_<anything>.png (for example pet_pajamas.png),
+  put them next to the exe, then:
+
+      right-click the pet -> Settings -> Skin
+
+  They'll show up in the dropdown and you can switch between them.
+
+
+==========================================================
+  4. RENAMING YOUR PET
+==========================================================
+
+  Right-click the pet -> Settings -> type a new name into the "宠物名"
+  (pet name) box -> OK.
+
+  Takes effect immediately, no restart needed. The {name} placeholder in the
+  dialogue lines resolves to the new name, and the tray tooltip updates too.
+
+  Leaving the box empty makes the pet refer to itself as 我 (the {name}
+  placeholder resolves to 我).
+
+  You can also edit "pet_name" in pet_config.json next to the exe:
+
+      { "pet_name": "小豆丁" }
+
+  (Note: it's the pet_config.json BESIDE the exe, not the one inside data\.)
+
+
+==========================================================
+  5. STARTS IN THE TRAY
+==========================================================
+
+  By default the pet window is HIDDEN after you double-click the exe — only
+  a small icon shows in the system tray at the bottom-right of the screen,
+  so it doesn't take over your desktop.
+
+  To bring it out:
+    - Click the tray icon, or
+    - Right-click the tray icon -> Show/hide pet.
+
+  To have the pet appear on the desktop at launch instead:
+    Right-click the tray icon -> Settings -> uncheck
+    「启动时隐藏窗口（只在托盘显示）」 ("hide window on startup, tray only")
+    -> OK. The pet window will show on launch from then on.
+
+
+  *** TRAY ICON MISSING? ***
+
+  Windows folds infrequently used icons into the taskbar's "hidden icons"
+  overflow (the up arrow ^). Click that arrow to find it.
+
+  To keep it visible on the taskbar (not folded away):
+    Settings -> Personalization -> Taskbar -> Taskbar corner overflow
+    (or "Select which icons appear on the taskbar")
+    -> find Desktop Pet and turn it On.
+
+  That's a Windows system setting — the app can't change it for you.
+
+
+==========================================================
+  6. TROUBLESHOOTING
+==========================================================
+
+Q: I swapped the images but nothing changed?
+A: Check three things, in order:
+   1. Are the images in the SAME folder as the exe (not a subfolder)?
+   2. Are the filenames spelled exactly right?
+   3. Did you restart the app?
+   The main sprite requires a restart; the minis don't — they update on the
+   next double-click.
+
+Q: The pet shows up as a white box, or is invisible?
+A: The image isn't a transparent PNG, or the file is corrupt. Copy the
+   original images from the zip back over yours to test.
+
+Q: The pet disappeared?
+A: It may have been dragged off-screen, or hidden via the tray. Look at the
+   tray icon at the bottom-right and right-click -> Show.
+
+Q: How do I restore the default sprite?
+A: Unzip the zip again and copy the 6 PNGs back over yours.
+
+Q: Where are my vocab book and screenshots?
+A: In the data\ folder next to the exe. Delete the whole data\ folder to
+   reset to the initial state.
