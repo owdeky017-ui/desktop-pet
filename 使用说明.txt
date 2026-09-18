@@ -81,7 +81,36 @@
 
 
 ==========================================================
-  五、常见问题
+  五、启动时在托盘里
+==========================================================
+
+  默认情况下，双击 exe 后宠物窗口是【隐藏】的，
+  只在屏幕右下角的系统托盘显示一个小图标 —— 不会占着你的桌面。
+
+  想让它出来：
+    - 单击托盘图标
+    - 或右键托盘图标 -> 显示/隐藏宠物
+
+  想让它一启动就出现在桌面上：
+    右键托盘图标 -> 设置 -> 取消勾选「启动时隐藏窗口（只在托盘显示）」
+    -> 确定。下次启动就会直接显示宠物。
+
+
+  *** 托盘图标找不到？ ***
+
+  Windows 会把不常用的图标收进任务栏的「隐藏的图标」（向上箭头 ^）里，
+  点一下那个箭头就能看到。
+
+  想让它一直显示在任务栏上（不被折叠）：
+    设置 -> 个性化 -> 任务栏 -> 任务栏角溢出
+    （或「选择哪些图标显示在任务栏上」）
+    -> 找到桌面宠物，设为「开」
+
+  这一步是 Windows 的系统设置，程序没法替你改。
+
+
+==========================================================
+  六、常见问题
 ==========================================================
 
 Q: 换了图片没反应？
@@ -128,5 +157,15 @@ right-click the pet -> Settings -> Skin to switch.
 Rename your pet: right-click the pet -> Settings -> type a new name into the
 "宠物名" (pet name) box -> OK. Takes effect immediately, no restart needed.
 You can also edit "pet_name" in pet_config.json next to the exe.
+
+Tray: the pet window is hidden on startup by default — only the tray icon
+shows. Click it (or right-click -> Show/hide pet) to bring the pet out. To
+show the window on launch instead: right-click -> Settings -> uncheck
+"启动时隐藏窗口（只在托盘显示）".
+
+Tray icon missing? Windows folds unused icons into the taskbar's "hidden
+icons" overflow (the up arrow) — click it to find the pet. To pin it:
+Settings -> Personalization -> Taskbar -> Taskbar corner overflow, then turn
+Desktop Pet on. That's a Windows setting the app can't set for you.
 
 Your data (vocab book, config, screenshots) lives in data\ next to the exe.

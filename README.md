@@ -186,6 +186,25 @@ Right-click → Autostart writes a `DesktopPet_Hana` entry under `HKCU\Software\
 
 ---
 
+## 托盘 · System tray
+
+**默认启动时宠物窗口是隐藏的，只在系统托盘显示图标** —— 不会一开机就占着桌面。想让它出来有两种方式：
+
+The pet window is **hidden on startup by default**; only the tray icon shows, so it won't take over your desktop the moment you launch it. Two ways to bring it out:
+
+- 单击托盘图标 / Click the tray icon
+- 右键托盘图标 → 显示/隐藏宠物 / Right-click → Show/hide pet
+
+不想要这个行为，就：右键 → 设置 → 取消勾选「启动时隐藏窗口（只在托盘显示）」，下次启动会直接显示宠物窗口。
+
+To change it: right-click → Settings → uncheck 「启动时隐藏窗口（只在托盘显示）」. The pet window will show on launch from then on.
+
+> **托盘图标找不到？** Windows 会把不常用的图标折叠进任务栏的「隐藏的图标」（向上箭头）里。点箭头就能看到；想让它一直显示在外面：**设置 → 个性化 → 任务栏 → 任务栏角溢出**（或"选择哪些图标显示在任务栏上"）→ 把桌面宠物设为「开」。这一步是 Windows 的系统行为，程序无法替你设置。
+>
+> **Tray icon missing?** Windows folds infrequently used icons into the "hidden icons" overflow (the up arrow). Click the arrow to find it; to pin it: **Settings → Personalization → Taskbar → Taskbar corner overflow** → turn Desktop Pet on. This is a Windows-level setting the app can't set for you.
+
+---
+
 ## 项目结构 · Project layout
 
 ```

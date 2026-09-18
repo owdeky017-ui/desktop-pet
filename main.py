@@ -831,6 +831,11 @@ class SettingsDialog(QDialog):
         self.chk_autostart.setChecked(pet.auto_start)
         layout.addWidget(self.chk_autostart)
 
+        self.chk_start_hidden = QCheckBox("启动时隐藏窗口（只在托盘显示）")
+        self.chk_start_hidden.setChecked(pet.start_hidden)
+        self.chk_start_hidden.setToolTip("勾选后程序启动时不弹宠物窗口，只在系统托盘显示图标，点托盘图标再叫它出来")
+        layout.addWidget(self.chk_start_hidden)
+
         self.chk_sound = QCheckBox("互动音效")
         self.chk_sound.setChecked(pet.sound_enabled)
         layout.addWidget(self.chk_sound)
@@ -929,6 +934,7 @@ class SettingsDialog(QDialog):
             "sound_volume": self.vol_slider.value(),
             "current_skin": self.skin_combo.currentData(),
             "pet_name": self.name_edit.text().strip() or DEFAULT_PET_NAME,
+            "start_hidden": self.chk_start_hidden.isChecked(),
         }
         self.settings_changed.emit(changes)
         self.accept()
@@ -1081,6 +1087,7 @@ class DesktopPet(QWidget):
         self.typing_enabled = True
         self.sound_enabled = True
         self.sound_volume = 50
+        self.start_hidden = True
         self._last_translated_text = ""
         self._translation_threads = []  # 保存翻译线程引用，防止被GC回收导致崩溃
         self._lookup_threads = []       # 保存查单词线程引用
@@ -1107,6 +1114,7 @@ class DesktopPet(QWidget):
         self.sound_volume = cfg.get("sound_volume", 50)
         self.current_skin = cfg.get("current_skin", "pet_transparent.png")
         self.pet_name = cfg.get("pet_name", DEFAULT_PET_NAME)
+        self.start_hidden = cfg.get("start_hidden", True)
         self._last_translated_text = ""
         # 加载选择的形象
         self._load_skin(self.current_skin)
@@ -1950,6 +1958,7 @@ class DesktopPet(QWidget):
                 "sound_volume": self.sound_volume,
                 "current_skin": self.current_skin,
                 "pet_name": self.pet_name,
+                "start_hidden": self.start_hidden,
             }
             with open(CONFIG_PATH, "w", encoding="utf-8") as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -2739,6 +2748,9 @@ render();
             self.sound_enabled = changes["sound_enabled"]
         if "sound_volume" in changes:
             self.sound_volume = changes["sound_volume"]
+        # 启动时是否只待在托盘
+        if "start_hidden" in changes:
+            self.start_hidden = changes["start_hidden"]
         # 形象切换
         if "current_skin" in changes and changes["current_skin"] != self.current_skin:
             self._switch_skin(changes["current_skin"])
@@ -2813,5 +2825,15 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     pet = DesktopPet()
-    pet.show()
+    if pet.start_hidden:
+        # 启动时只在托盘显示。Windows 可能把图标折叠进「隐藏的图标」，
+        # 所以弹一次气泡告诉用户去哪找。
+        pet.tray.showMessage(
+            "桌面宠物",
+            "我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来",
+            QSystemTrayIcon.Information,
+            4000,
+        )
+    else:
+        pet.show()
     sys.exit(app.exec())
