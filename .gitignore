@@ -8,6 +8,11 @@ __pycache__/
 build/
 dist/
 
+# Versioned build output (e.g. build_v7/, dist_v7/, spec_v7/)
+build_*/
+dist_*/
+spec_*/
+
 # Virtual env (do not commit)
 venv/
 .venv/
