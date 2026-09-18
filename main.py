@@ -244,6 +244,10 @@ EN = {
     "显示/隐藏宠物": "Show / hide pet",
     "我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来":
         "I'm hiding in the taskbar tray~ click the tray icon to call me out",
+    # 首次启动欢迎（用应用内气泡，不依赖系统 toast，
+    # 因为部分机器的 toast 通知是关闭的根本看不见）
+    "嗨！第一次见面～右键可以改名字、换皮肤；之后我会躲进右下角托盘，点托盘图标叫我出来":
+        "Hi, first time meeting you~ right-click to rename or change skin. After this I'll hide in the tray at the bottom-right — click the tray icon to call me out",
 
     # ---------- 互动气泡 ----------
     "呜…文件夹建不了吖(>﹏<)":
@@ -1390,6 +1394,9 @@ class DesktopPet(QWidget):
         self.current_skin = cfg.get("current_skin", "pet_transparent.png")
         self.pet_name = cfg.get("pet_name", DEFAULT_PET_NAME)
         self.start_hidden = cfg.get("start_hidden", True)
+        # 是否已经给用户展示过首次欢迎气泡。新版本升级也会触发（pet_config.json
+        # 里没有这个字段），让老用户也能看到一次「桌宠长这样 + 怎么叫出来」。
+        self._welcomed = cfg.get("_welcomed", False)
         self._last_translated_text = ""
         # 加载选择的形象
         self._load_skin(self.current_skin)
@@ -2246,6 +2253,7 @@ class DesktopPet(QWidget):
                 "current_skin": self.current_skin,
                 "pet_name": self.pet_name,
                 "start_hidden": self.start_hidden,
+                "_welcomed": self._welcomed,
             }
             with open(CONFIG_PATH, "w", encoding="utf-8") as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -3139,15 +3147,34 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     pet = DesktopPet()
+    # 用「_welcomed」标记判断是否首次：不存在 pet_config.json 或里面没有这个字段
+    # 都算首次，让升级用户也能看到一次「桌宠长这样 + 怎么叫出来」再自动收进托盘。
+    # 不用系统 toast 是因为部分机器的 toast 通知是关闭的（HKCU\...\ToastEnabled=0），
+    # 那种情况下 showMessage 根本不显示——用户就完全看不到任何提示。
+    first_run = not pet._welcomed
     if pet.start_hidden:
-        # 启动时只在托盘显示。Windows 可能把图标折叠进「隐藏的图标」，
-        # 所以弹一次气泡告诉用户去哪找。
-        pet.tray.showMessage(
-            T("桌面宠物"),
-            T("我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来"),
-            QSystemTrayIcon.Information,
-            4000,
-        )
+        if first_run:
+            pet.show()
+            pet._show_bubble(T(
+                "嗨！第一次见面～右键可以改名字、换皮肤；"
+                "之后我会躲进右下角托盘，点托盘图标叫我出来"
+            ))
+
+            def _dismiss_welcome():
+                if pet.bubble.isVisible():
+                    pet._hide_bubble()
+                pet.hide()
+                # 标记已欢迎过，下次启动就不再亮一次
+                pet._welcomed = True
+                pet._save_config()
+            QTimer.singleShot(8000, _dismiss_welcome)
+        else:
+            pet.tray.showMessage(
+                T("桌面宠物"),
+                T("我躲在任务栏托盘里啦～点一下托盘图标就能叫我出来"),
+                QSystemTrayIcon.Information,
+                4000,
+            )
     else:
         pet.show()
     sys.exit(app.exec())

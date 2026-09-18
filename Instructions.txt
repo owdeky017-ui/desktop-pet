@@ -94,7 +94,9 @@ Step 3: Overwrite and restart
   5. STARTS IN THE TRAY
 ==========================================================
 
-  By default the pet window is HIDDEN after you launch the app — only a
+  On FIRST RUN the pet window pops up briefly with a welcome bubble so you
+  can see what it looks like, then it auto-hides into the tray after about
+  8 seconds. After that the default behaviour is: pet window HIDDEN, only a
   small icon shows in the system tray at the bottom-right of the screen, so
   it doesn't take over your desktop.
 
