@@ -29,8 +29,9 @@ No installer, no Python required.
   a reference for size and format when making your own.
 
   On first run the app creates a data/ folder next to the exe. Your vocab
-  book, config, and screenshots all go in there — nothing is scattered
-  elsewhere.
+  book, dialogue library, logs, and screenshots all go in there — nothing is
+  scattered elsewhere. Window position and settings live in pet_config.json
+  next to the exe (NOT inside data/).
 
 
 ==========================================================
@@ -78,8 +79,8 @@ Step 3: Overwrite and restart
   Takes effect immediately, no restart needed. The {name} placeholder in the
   dialogue lines resolves to the new name, and the tray tooltip updates too.
 
-  Leaving the box empty makes the pet refer to itself as 我 (the {name}
-  placeholder resolves to 我).
+  Leaving the box empty makes the pet refer to itself as 我 (the Chinese word
+  for "I" — the {name} placeholder resolves to 我).
 
   You can also edit "pet_name" in pet_config.json next to the exe:
 

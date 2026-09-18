@@ -123,7 +123,7 @@ DesktopPet_v69.exe
 
 ### Rename your pet
 
-Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` in `pet_config.json` — **unnamed by default**, in which case the pet refers to itself as 我. Two ways to rename:
+Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` in `pet_config.json` — **unnamed by default**, in which case the pet refers to itself as 我 (the Chinese word for "I"). Two ways to rename:
 
 **1. Through the UI (recommended)** — right-click the pet → Settings → type a new name in the box → OK. Takes effect immediately; the tray tooltip and dialogue update live.
 
