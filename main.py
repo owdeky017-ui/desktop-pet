@@ -1418,6 +1418,9 @@ class DesktopPet(QWidget):
 
         self._apply_scale()
         self._apply_auto_start()
+        # 首次启动的欢迎气泡要独占这一段时间，别让时段问候在 3 秒后把它顶掉。
+        # 入口处在 show() 之前会把这个开关打开。
+        self._suppress_greeting = False
         # 启动3秒后时间段问候
         QTimer.singleShot(3000, self._greeting_by_time)
         # 启动生词本HTTP服务（供HTML删除同步）
@@ -1997,6 +2000,9 @@ class DesktopPet(QWidget):
     def _greeting_by_time(self):
         """启动时根据时间段说问候语（台词从外部JSON加载）"""
         if not self.bubble_enabled:
+            return
+        # 首次启动时欢迎气泡正在讲「怎么找到我」，时段问候会把它顶掉，所以跳过
+        if self._suppress_greeting:
             return
         hour = time.localtime().tm_hour
         if 6 <= hour < 11:
@@ -3154,6 +3160,9 @@ if __name__ == "__main__":
     first_run = not pet._welcomed
     if pet.start_hidden:
         if first_run:
+            # 压住启动 3 秒后的时段问候——否则它会把欢迎气泡顶掉，
+            # 用户只来得及看 3 秒「怎么找到我」就被换成一句无关的问候。
+            pet._suppress_greeting = True
             pet.show()
             pet._show_bubble(T(
                 "嗨！第一次见面～右键可以改名字、换皮肤；"
@@ -3167,7 +3176,8 @@ if __name__ == "__main__":
                 # 标记已欢迎过，下次启动就不再亮一次
                 pet._welcomed = True
                 pet._save_config()
-            QTimer.singleShot(8000, _dismiss_welcome)
+            # 欢迎语要打完字还要留阅读时间，给足 10 秒再收
+            QTimer.singleShot(10000, _dismiss_welcome)
         else:
             pet.tray.showMessage(
                 T("桌面宠物"),
@@ -3177,4 +3187,9 @@ if __name__ == "__main__":
             )
     else:
         pet.show()
+        # 宠物本来就显示在桌面上，不需要「去哪找我」的欢迎语；
+        # 但标记还是要落盘，否则之后开启「启动时隐藏」又会弹一次。
+        if first_run:
+            pet._welcomed = True
+            pet._save_config()
     sys.exit(app.exec())
