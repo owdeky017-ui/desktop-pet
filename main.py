@@ -76,7 +76,7 @@ def get_mini_images():
 DEFAULT_PET_NAME = "花枝"  # 台词里的 {name} 会替换成它
 MIN_SCALE = 0.1
 MAX_SCALE = 1.0
-DEFAULT_SCALE = 0.1
+DEFAULT_SCALE = 0.5  # 0.1 对 placeholder（256px）太不友好；首启缩到 26px 用户看不到。改为 0.5 后占位图 128px 可见。已有 config 用户的 scale 不受这个值影响
 BUBBLE_DURATION = 4000  # 气泡显示时长ms
 IDLE_ACTION_MIN = 30000  # 闲置动作最小间隔ms
 IDLE_ACTION_MAX = 60000  # 闲置动作最大间隔ms
