@@ -157,9 +157,9 @@ DesktopPet_v69.exe
 
 ### 改宠物名 · Rename your pet
 
-台词里的 `{name}` 是占位符，运行时替换成 `pet_name`，默认是「花枝」。改名有两种方式：
+台词里的 `{name}` 是占位符，运行时替换成 `pet_name`，**默认未命名**（此时宠物自称「我」）。改名有两种方式：
 
-Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` (defaults to 花枝). Two ways to rename:
+Dialogue lines contain a `{name}` placeholder that resolves at runtime from `pet_name` — **unnamed by default**, in which case the pet refers to itself as 我. Two ways to rename:
 
 **1. 设置面板（推荐）** —— 右键 → 设置 → 在「宠物名」输入框里改 → 确定。立即生效，不用重启，托盘提示和台词会同步更新。
 
@@ -173,8 +173,8 @@ Or edit `pet_config.json` directly:
 { "pet_name": "小豆丁" }
 ```
 
-> 输入框留空的话，会回到默认名字「花枝」。
-> Leaving the box empty reverts to the default name 花枝.
+> 输入框留空的话，宠物会自称「我」（台词里的 `{name}` 替换成「我」）。
+> Leaving the box empty makes the pet refer to itself as 我.
 
 ---
 

@@ -73,7 +73,7 @@ def get_mini_images():
         custom = os.path.join(base, name)
         paths.append(custom if os.path.exists(custom) else get_resource_path(name))
     return paths
-DEFAULT_PET_NAME = "花枝"  # 台词里的 {name} 会替换成它
+DEFAULT_PET_NAME = ""  # 默认未命名；留空时台词里的 {name} 自称「我」，用户可在设置里改名
 MIN_SCALE = 0.1
 MAX_SCALE = 1.0
 DEFAULT_SCALE = 0.5  # 0.1 对 placeholder（256px）太不友好；首启缩到 26px 用户看不到。改为 0.5 后占位图 128px 可见。已有 config 用户的 scale 不受这个值影响
@@ -856,7 +856,7 @@ class SettingsDialog(QDialog):
         name_layout = QHBoxLayout()
         name_layout.addWidget(QLabel("宠物名："))
         self.name_edit = QLineEdit(pet.pet_name)
-        self.name_edit.setPlaceholderText(DEFAULT_PET_NAME)
+        self.name_edit.setPlaceholderText("未命名（留空则自称「我」）")
         name_layout.addWidget(self.name_edit, 1)
         layout.addLayout(name_layout)
 
@@ -1450,8 +1450,8 @@ class DesktopPet(QWidget):
         return result
 
     def _show_bubble(self, text):
-        # 台词里的 {name} 占位符换成宠物名
-        text = text.replace("{name}", self.pet_name)
+        # 台词里的 {name} 占位符换成宠物名；未命名时自称「我」
+        text = text.replace("{name}", self.pet_name or "我")
         # 气泡显示在宠物左侧，尾巴指向玫瑰花（避开头顶小人掉落区域）
         rose_x = self.x() + int(self.width() * 0.14)
         rose_y = self.y() + int(self.height() * 0.35)
