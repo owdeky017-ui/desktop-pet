@@ -246,8 +246,10 @@ EN = {
         "I'm hiding in the taskbar tray~ click the tray icon to call me out",
     # 首次启动欢迎（用应用内气泡，不依赖系统 toast，
     # 因为部分机器的 toast 通知是关闭的根本看不见）
-    "嗨！第一次见面～右键可以改名字、换皮肤；之后我会躲进右下角托盘，点托盘图标叫我出来":
-        "Hi, first time meeting you~ right-click to rename or change skin. After this I'll hide in the tray at the bottom-right — click the tray icon to call me out",
+    # 注意：气泡是打字机逐字显示的（约 13 字/秒），文案不能长——
+    # 太长的话还没打完宠物就收走了。这里控制在 ~100 字符以内。
+    "嗨！右键可以改名字、换皮肤。之后我会躲进右下角托盘，点托盘图标叫我出来":
+        "Hi! Right-click to rename or change skin. I'll wait in the tray — click my icon to bring me back",
 
     # ---------- 互动气泡 ----------
     "呜…文件夹建不了吖(>﹏<)":
@@ -3165,7 +3167,7 @@ if __name__ == "__main__":
             pet._suppress_greeting = True
             pet.show()
             pet._show_bubble(T(
-                "嗨！第一次见面～右键可以改名字、换皮肤；"
+                "嗨！右键可以改名字、换皮肤。"
                 "之后我会躲进右下角托盘，点托盘图标叫我出来"
             ))
 
@@ -3176,8 +3178,10 @@ if __name__ == "__main__":
                 # 标记已欢迎过，下次启动就不再亮一次
                 pet._welcomed = True
                 pet._save_config()
-            # 欢迎语要打完字还要留阅读时间，给足 10 秒再收
-            QTimer.singleShot(10000, _dismiss_welcome)
+            # 宠物陪到气泡自己算好的时长（打字 + 阅读）结束再收，
+            # 不要写死秒数——气泡是打字机逐字显示的，写死了文案还没打完就收走了。
+            stay = pet.bubble_timer.interval() or 10000
+            QTimer.singleShot(stay + 500, _dismiss_welcome)
         else:
             pet.tray.showMessage(
                 T("桌面宠物"),
