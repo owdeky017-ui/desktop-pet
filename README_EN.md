@@ -106,6 +106,8 @@ pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69_en ^
 
 > The file must be named `lang.txt` — `--add-data` places files in a target directory without renaming them, so prepare the Chinese and English markers in separate folders.
 
+> **The dialogue library is split by language**: the Chinese build writes `data/lines.json`, the English build writes `data/lines_en.json`. The two builds are very likely to be unzipped into the same folder and share `data/`; a single shared file would mean whichever build runs first forces its language on the other (the English build would start speaking Chinese). On first launch the English build also adopts a legacy `lines.json` if its content really is English (it shares lines with the defaults), so no user-edited dialogue is lost.
+
 Under the hood every UI string is written as `T("中文原文")`. `T()` returns the string unchanged in the Chinese build and looks it up in the `EN` table in the English one. The dialogue library, menus, settings window, bubbles, and the word-list export page all go through it. **The Chinese build's output is byte-for-byte identical to before i18n was added.**
 
 ---
@@ -142,7 +144,8 @@ DesktopPet_v69.exe
 ├── (your PNGs)        # pet_transparent.png / mini_*.png / pet_xxx.png
 └── data/
     ├── vocab.json          # vocab book
-    ├── lines.json          # custom dialogue (generated on first run)
+    ├── lines.json          # custom dialogue (Chinese build; generated on first run)
+    ├── lines_en.json       # custom dialogue (English build; same idea)
     ├── typing_log.txt      # debug log (generated as needed)
     ├── translation_log.txt # debug log (generated as needed)
     └── screenshots/        # screenshots folder

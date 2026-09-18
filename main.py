@@ -367,7 +367,12 @@ else:
 # 数据目录：vocab、台词库、日志、截图都放这里
 DATA_DIR = get_data_dir()
 VOCAB_PATH = os.path.join(DATA_DIR, "vocab.json")
-LINES_PATH = os.path.join(DATA_DIR, "lines.json")
+# 台词库按语言分文件。中英两个版本很可能被解压到同一个文件夹里共用 data/，
+# 如果共用一个 lines.json，谁先运行、谁的语言就会把另一个版本也带偏
+# （英文版会开始说中文台词）。中文版沿用 lines.json，老用户的自定义不会丢。
+LINES_PATH = os.path.join(
+    DATA_DIR, "lines.json" if APP_LANG == "zh" else f"lines_{APP_LANG}.json"
+)
 
 # 开机自启动写在 HKCU\...\Run 下的值名。
 # 旧版本用的是 DesktopPet_Hana，写入新值时顺手清掉，避免两条自启动项重复拉起。
@@ -461,12 +466,42 @@ DEFAULT_LINES = {
 }
 
 
+def _migrate_legacy_lines():
+    """把旧版共用的 lines.json 接过来（仅当它的内容属于当前语言时）。
+
+    英文版早期也用 lines.json。如果语言专属文件还不存在、而旧的 lines.json
+    里确实是我们这个语言的台词，就复制一份过来，免得用户改过的台词白改。
+    中英台词没有重合项，所以「有交集」就足以判定语言。
+    """
+    if APP_LANG == "zh" or os.path.exists(LINES_PATH):
+        return
+    legacy = os.path.join(os.path.dirname(LINES_PATH), "lines.json")
+    if not os.path.exists(legacy):
+        return
+    try:
+        with open(legacy, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        ours = set()
+        for v in DEFAULT_LINES.values():
+            ours.update(v)
+        theirs = set()
+        for v in data.values():
+            if isinstance(v, list):
+                theirs.update(v)
+        if ours & theirs:
+            with open(LINES_PATH, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
 def _load_lines_from_file():
-    """从 DATA_DIR/lines.json 加载台词，不存在则创建默认文件"""
+    """从 LINES_PATH 加载台词，不存在则创建默认文件"""
     try:
         data_dir = os.path.dirname(LINES_PATH)
         if not os.path.exists(data_dir):
             os.makedirs(data_dir, exist_ok=True)
+        _migrate_legacy_lines()
         if not os.path.exists(LINES_PATH):
             with open(LINES_PATH, "w", encoding="utf-8") as f:
                 json.dump(DEFAULT_LINES, f, ensure_ascii=False, indent=2)

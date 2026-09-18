@@ -108,6 +108,8 @@ pyinstaller --noconfirm --onefile --windowed --name DesktopPet_v69_en ^
 
 > 文件名必须是 `lang.txt`（`--add-data` 的目标目录不会重命名文件），所以中文版和英文版要分别放在不同目录下准备。
 
+> **台词库按语言分文件**：中文版写 `data/lines.json`，英文版写 `data/lines_en.json`。两个版本很可能被解压到同一个文件夹里共用 `data/`，如果共用一个文件，谁先运行谁的语言就会把另一个版本也带偏（英文版会开始说中文台词）。英文版第一次启动时，如果发现旧的 `lines.json` 内容确实属于英文（和默认台词有交集），会自动接过来，不会丢用户改过的台词。
+
 代码里的做法是：所有界面文案都写成 `T("中文原文")`，`T()` 在中文版原样返回、英文版查 `EN` 表替换。台词库、菜单、设置面板、气泡、生词本导出页都走这一层。**中文版的输出与加入多语言之前逐字一致。**
 
 ---
@@ -144,7 +146,8 @@ DesktopPet_v69.exe
 ├── (你的 PNGs)        # pet_transparent.png / mini_*.png / pet_xxx.png
 └── data/
     ├── vocab.json          # 生词本
-    ├── lines.json          # 自定义台词（首次运行自动生成）
+    ├── lines.json          # 自定义台词（中文版；首次运行自动生成）
+    ├── lines_en.json       # 自定义台词（英文版；同上）
     ├── typing_log.txt      # 调试日志（按需生成）
     ├── translation_log.txt # 调试日志（按需生成）
     └── screenshots/        # 截图保存目录
